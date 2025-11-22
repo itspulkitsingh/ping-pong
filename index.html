@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Neon Pong Welcome</title>
+  <link rel="stylesheet" href="welcome.css" />
+</head>
+<body>
+  <div class="container">
+    <h1 class="neon-text">Welcome to Neon Pong!</h1>
+    <p class="neon-text">Classic Pong in neon green. Mouse or touch. First to 10 wins!</p>
+    <button id="enterBtn" class="neon-btn">Enter Game</button>
+  </div>
+  <script>
+    document.getElementById("enterBtn").onclick = function() {
+      window.location.href = "game.html";
+    };
+  </script>
+</body>
+</html>

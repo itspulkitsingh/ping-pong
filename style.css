@@ -1,0 +1,71 @@
+body {
+  background: #000;
+  min-height: 100vh;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: monospace;
+}
+#gameContainer {
+  width: 95vw;
+  max-width: 900px;
+  border: 7px solid #39ff14;
+  box-shadow: 0 0 40px #39ff14;
+  border-radius: 20px;
+  background: #000;
+  margin: 40px auto;
+  padding: 36px 0 26px 0;
+  text-align: center;
+}
+#scoreBoard {
+  font-size: 2rem;
+  color: #39ff14;
+  margin-bottom: 14px;
+  letter-spacing: 1.2rem;
+  text-shadow: 0 0 14px #39ff14;
+}
+canvas {
+  width: 100%;
+  max-width: 860px;
+  height: 46vw;
+  max-height: 460px;
+  display: block;
+  margin: 0 auto 18px auto;
+  background: #000;
+  border-radius: 12px;
+  box-shadow: 0 0 22px #39ff14;
+}
+#controls {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-bottom: 20px;
+}
+button {
+  background: #111;
+  color: #39ff14;
+  border: 2px solid #39ff14;
+  padding: 14px 42px;
+  font-size: 1.08rem;
+  border-radius: 8px;
+  box-shadow: 0 0 12px #39ff14;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+button:hover:not(:disabled) {
+  background: #39ff14;
+  color: #111;
+}
+button:disabled {
+  background: #222;
+  color: #676;
+  box-shadow: none;
+}
+#loveText {
+  margin-top: 22px;
+  font-size: 1.2rem;
+  color: #39ff14;
+  text-shadow: 0 0 10px #39ff14;
+}
