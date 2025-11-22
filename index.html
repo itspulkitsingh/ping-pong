@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Ping Pong</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Share+Tech+Mono&display=swap">
+    <link rel="stylesheet" href="welcome.css">
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="neon-text" id="mainTitle">Welcome to the Cool Ping Pong!</h1>
+      <p class="neon-text" id="introText">
+        Experience a classic Ping Pong game in retro neon style with mind calming music!🎶<br><br>
+        <b>Rules:</b>
+        Challenge the computer, Reach 10 points first, Calm yourself with the retro glowing green effects!
+      </p>
+      <p class="neon-text" id="descText">
+        <b>Enjoy!</b>
+      </p>
+      <button id="enterBtn" class="neon-btn">Enter Game</button>
+    </div>
+    <script>
+    function wrapLetters(id) {
+      const el = document.getElementById(id);
+      el.innerHTML = el.textContent.split('').map(ch => 
+        ch === ' ' ? ' ' : `<span class="neon-letter">${ch}</span>`
+      ).join('');
+    }
+    wrapLetters('mainTitle');
+    wrapLetters('introText');
+    wrapLetters('descText');
+
+    document.getElementById("enterBtn").onclick = function() {
+      window.location.href = "game.html";
+    }
+  </script>
+  </body>
+</html>
