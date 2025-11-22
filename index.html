@@ -7,14 +7,32 @@
 </head>
 <body>
   <div class="container">
-    <h1 class="neon-text">Welcome to Neon Pong!</h1>
-    <p class="neon-text">Classic Pong in neon green. Mouse or touch. First to 10 wins!</p>
+    <h1 class="neon-text" id="mainTitle">Welcome to Neon Pong!</h1>
+    <p class="neon-text" id="introText">
+      This is a little neon arcade game you can play right in your browser.<br>
+      Challenge the computer, reach 10 points first, and enjoy some glowing green retro fun!
+    </p>
+    <p class="neon-text" id="descText">
+      Control your paddle with your mouse or touch.<br>
+      Works great on all screens and devices.
+    </p>
     <button id="enterBtn" class="neon-btn">Enter Game</button>
   </div>
   <script>
+    function wrapLetters(id) {
+      const el = document.getElementById(id);
+      el.innerHTML = el.textContent.split('').map(ch =>
+        ch === ' ' ? ' ' : `<span class="neon-letter">${ch}</span>`
+      ).join('');
+    }
+    wrapLetters('mainTitle');
+    wrapLetters('introText');
+    wrapLetters('descText');
+
     document.getElementById("enterBtn").onclick = function() {
       window.location.href = "game.html";
     };
   </script>
 </body>
 </html>
+
