@@ -1,35 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale" />
-    <title>Ping Pong</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Share+Tech+Mono&display=swap">
-    <link rel="stylesheet" href="game.css">
-  </head>
-  <body>
-    <div id="gameContainer">
-      <div id="topBar">
-        <button id="backBtn" class="neon-btn">Back</button>
-      </div>
-      <div id="scoreBoard" class="neon-text">
-        <span id="playScore">0</span> | <span id="computerScore">0</span>
-      </div>
-      <canvas id="gameCanvas" width="800" height="450"></canvas>
-      <div id="controls">
-        <button id="startBtn" class="neon-btn">Start</button>
-        <button id="pauseBtn" class="neon-btn" disabled>Pause</button>
-        <button id="resetBtn" class="neon-btn">Reset</button>
-      </div>
-      <div id="loveText" class="neon-text" style="margin-top: 34px; font-size: 1.3rem;">
-        Made with ❤️ by Pulkit Singh
-      </div>
+<head>
+  <meta charset="UTF-8" />
+  <title>Ping Pong</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="game.css" />
+  <link href="https://fonts.googleapis.com/css?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="gameContainer">
+    <div id="topBar">
+      <button id="backBtn" class="neon-btn">Back to Welcome</button>
     </div>
-    <script src="game.js"></script>
-    <script>
-      document.getElementById("backBtn").onclick = function() {
-        window.location.href = "index.html";
+    <div id="scoreBoard" class="neon-text">
+      <span id="playerScore">0</span> | <span id="computerScore">0</span>
+    </div>
+    <canvas id="gameCanvas" width="800" height="450"></canvas>
+    <div id="controls">
+      <button id="startBtn" class="neon-btn">Start</button>
+      <button id="pauseBtn" class="neon-btn" disabled>Pause</button>
+      <button id="resetBtn" class="neon-btn">Reset</button>
+    </div>
+    <div id="loveText" class="neon-text" style="margin-top:34px; font-size:1.3rem;">
+      Made with ❤️ by Pulkit Singh
+    </div>
+  </div>
+  <script src="game.js"></script>
+  <script>
+    document.getElementById("backBtn").onclick = function() {
+      window.location.href = "index.html";
     };
-    </script>
-  </body>
+  </script>
+</body>
 </html>
