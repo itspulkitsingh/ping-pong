@@ -113,10 +113,10 @@ function updateScore(playerScored) {
     computerScoreElem.textContent = computerScore;
   }
   if (playerScore >= WINNING_SCORE) {
-    alert("Congratulations! You won!");
+    alert("Congratulations buddy! Have a great day ahead 😊");
     resetGame();
   } else if (computerScore >= WINNING_SCORE) {
-    alert("Computer won! Try again.");
+    alert("It's alright bud, stay calm and u may try again! 🫡");
     resetGame();
   } else {
     resetBall(playerScored);
@@ -207,5 +207,6 @@ resetBtn.addEventListener("click", resetGame);
 document.getElementById("backBtn").onclick = function() {
   window.location.href = "index.html";
 };
+
 
 
