@@ -55,14 +55,6 @@ cd neon-pong
 
 ---
 
-## 🌟 Customization Ideas
-
-- Swap out sound effects in code for your preferences
-- Tweak neon colors in CSS
-- Experiment with the winning score or AI difficulty
-
----
-
 ## 🛠️ Tech Stack
 
 - HTML5 & Canvas
