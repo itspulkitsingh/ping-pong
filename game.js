@@ -93,7 +93,7 @@ function update() {
   const aiCenter = computerPaddle.y + computerPaddle.height / 2;
   const delta = ball.y - aiCenter;
   const threshold = 10;
-  const missChance = 0.3;
+  const missChance = 0.25;
   if (Math.abs(delta) > threshold) {
     const direction = delta > 0 ? 1 : -1;
     if (Math.random() < missChance) {
@@ -207,6 +207,7 @@ resetBtn.addEventListener("click", resetGame);
 document.getElementById("backBtn").onclick = function() {
   window.location.href = "index.html";
 };
+
 
 
 
