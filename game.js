@@ -5,7 +5,15 @@ const computerScoreElem = document.getElementById("computerScore");
 const startBtn = document.getElementById("startBtn");
 const pauseBtn = document.getElementById("pauseBtn");
 const resetBtn = document.getElementById("resetBtn");
-const WINNING_SCORE = 10;
+const WINNING_SCORE = 5;
+const hitSound = new Audio('./audio/hit.wav');
+hitSound.volume = 0.35;
+const missSound = new Audio('/audio/miss.wav');
+missSound.volume = 0.35;
+const winSound = new Audio('/audio/win.wav');
+winSound.volume = 0.45;
+const loseSound = new Audio('/audio/lose.wav');
+loseSound.volume = 0.45;
 let animationId = null;
 let isRunning = false;
 let gameOver = false;
@@ -75,6 +83,8 @@ function update() {
     ball.x = playerPaddle.x + playerPaddle.width + ball.radius;
     ball.speedX = -ball.speedX * 1.05;
     ball.speedY *= 1.05;
+    hitSound.currentTime = 0;
+    hitSound.play()
   }
   if (
     ball.x + ball.radius > computerPaddle.x &&
@@ -84,16 +94,22 @@ function update() {
     ball.x = computerPaddle.x - ball.radius;
     ball.speedX = -ball.speedX * 1.05;
     ball.speedY *= 1.05;
+    hitSound.currentTime = 0;
+    hitSound.play();
   }
   if (ball.x - ball.radius < 0) {
+    missSound.currentTime = 0;
+    missSound.play();
     updateScore(false);
   } else if (ball.x + ball.radius > canvas.width) {
+    missSound.currentTime = 0;
+    missSound.play();
     updateScore(true);
   }
   const aiCenter = computerPaddle.y + computerPaddle.height / 2;
   const delta = ball.y - aiCenter;
   const threshold = 10;
-  const missChance = 0.25;
+  const missChance = 0.3;
   if (Math.abs(delta) > threshold) {
     const direction = delta > 0 ? 1 : -1;
     if (Math.random() < missChance) {
@@ -113,9 +129,13 @@ function updateScore(playerScored) {
     computerScoreElem.textContent = computerScore;
   }
   if (playerScore >= WINNING_SCORE) {
+    winSound.currentTime = 0;
+    winSound.play();
     alert("Congratulations buddy! Have a great day ahead 😊");
     resetGame();
   } else if (computerScore >= WINNING_SCORE) {
+    loseSound.curretTime = 0;
+    loseSound.play();
     alert("It's alright bud, stay calm and u may try again! 🫡");
     resetGame();
   } else {
@@ -204,10 +224,3 @@ resetBall(true);
 startBtn.addEventListener("click", startGame);
 pauseBtn.addEventListener("click", pauseGame);
 resetBtn.addEventListener("click", resetGame);
-document.getElementById("backBtn").onclick = function() {
-  window.location.href = "index.html";
-};
-
-
-
-
