@@ -5,68 +5,111 @@ const computerScoreElem = document.getElementById("computerScore");
 const startBtn = document.getElementById("startBtn");
 const pauseBtn = document.getElementById("pauseBtn");
 const resetBtn = document.getElementById("resetBtn");
+
 const WINNING_SCORE = 5;
+const paddleHeight = 90;
+const paddleWidth = 12;
+
 const hitSound = new Audio('./audio/hit.wav');
 hitSound.volume = 0.35;
-const missSound = new Audio('/audio/miss.wav');
+const missSound = new Audio('./audio/miss.wav');
 missSound.volume = 0.35;
-const winSound = new Audio('/audio/win.wav');
+const winSound = new Audio('./audio/win.wav');
 winSound.volume = 0.45;
-const loseSound = new Audio('/audio/lose.wav');
+const loseSound = new Audio('./audio/lose.wav');
 loseSound.volume = 0.45;
+
 let animationId = null;
 let isRunning = false;
 let gameOver = false;
-const ball = {
-  x: canvas.width / 2,
-  y: canvas.height / 2,
-  radius: 10,
-  speedX: 5,
-  speedY: 5,
-  glowColor: '#39ff14',
-};
-const paddleWidth = 12;
-const paddleHeight = 90;
-const playerPaddle = {
-  x: 0,
-  y: (canvas.height - paddleHeight) / 2,
-  width: paddleWidth,
-  height: paddleHeight,
-  color: '#39ff14',
-};
-const computerPaddle = {
-  x: canvas.width - paddleWidth,
-  y: (canvas.height - paddleHeight) / 2,
-  width: paddleWidth,
-  height: paddleHeight,
-  color: '#39ff14',
-  speed: 6,
-};
+
+let ball = {};
+let playerPaddle = {};
+let computerPaddle = {};
 let playerScore = 0;
 let computerScore = 0;
+
 function resizeCanvas() {
   canvas.width = canvas.offsetWidth;
   canvas.height = canvas.offsetHeight;
+  
+  if (ball) {
+    ball.x = canvas.width / 2;
+    ball.y = canvas.height / 2;
+  }
+  if (playerPaddle) {
+    playerPaddle.x = 0;
+    playerPaddle.y = (canvas.height - paddleHeight) / 2;
+  }
+  if (computerPaddle) {
+    computerPaddle.x = canvas.width - paddleWidth;
+    computerPaddle.y = (canvas.height - paddleHeight) / 2;
+  }
 }
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
-canvas.addEventListener("mousemove", e => {
-  if (!isRunning || gameOver) return;
-  const rect = canvas.getBoundingClientRect();
-  const mouseY = Math.min(Math.max(e.clientY - rect.top, 0), canvas.height);
-  playerPaddle.y = Math.min(Math.max(mouseY - paddleHeight / 2, 0), canvas.height - paddleHeight);
-});
-canvas.addEventListener("touchmove", e => {
-  e.preventDefault();
-  if (!isRunning || gameOver) return;
-  const rect = canvas.getBoundingClientRect();
-  const touchY = Math.min(Math.max(e.touches[0].clientY - rect.top, 0), canvas.height);
-  playerPaddle.y = Math.min(Math.max(touchY - paddleHeight / 2, 0), canvas.height - paddleHeight);
-}, { passive: false });
+
+function init() {
+  resizeCanvas();
+  
+  ball = {
+    x: canvas.width / 2,
+    y: canvas.height / 2,
+    radius: 10,
+    speedX: 5,
+    speedY: 5,
+    glowColor: '#39ff14'
+  };
+  
+  playerPaddle = {
+    x: 0,
+    y: (canvas.height - paddleHeight) / 2,
+    width: paddleWidth,
+    height: paddleHeight,
+    color: '#39ff14'
+  };
+  
+  computerPaddle = {
+    x: canvas.width - paddleWidth,
+    y: (canvas.height - paddleHeight) / 2,
+    width: paddleWidth,
+    height: paddleHeight,
+    color: '#39ff14',
+    speed: 6
+  };
+  
+  window.addEventListener('resize', resizeCanvas);
+  setupControls();
+  startBtn.disabled = false;
+  pauseBtn.disabled = true;
+  gameOver = false;
+}
+
+function setupControls() {
+  canvas.addEventListener("mousemove", e => {
+    if (!isRunning || gameOver) return;
+    const rect = canvas.getBoundingClientRect();
+    const mouseY = Math.min(Math.max(e.clientY - rect.top, 0), canvas.height);
+    playerPaddle.y = Math.min(Math.max(mouseY - paddleHeight / 2, 0), canvas.height - paddleHeight);
+  });
+  
+  canvas.addEventListener("touchmove", e => {
+    e.preventDefault();
+    if (!isRunning || gameOver) return;
+    const rect = canvas.getBoundingClientRect();
+    const touchY = Math.min(Math.max(e.touches[0].clientY - rect.top, 0), canvas.height);
+    playerPaddle.y = Math.min(Math.max(touchY - paddleHeight / 2, 0), canvas.height - paddleHeight);
+  }, { passive: false });
+  
+  startBtn.addEventListener("click", startGame);
+  pauseBtn.addEventListener("click", pauseGame);
+  resetBtn.addEventListener("click", resetGame);
+}
+
 function update() {
   if (gameOver) return;
+  
   ball.x += ball.speedX;
   ball.y += ball.speedY;
+  
   if (ball.y - ball.radius < 0) {
     ball.y = ball.radius;
     ball.speedY = -ball.speedY;
@@ -75,6 +118,7 @@ function update() {
     ball.y = canvas.height - ball.radius;
     ball.speedY = -ball.speedY;
   }
+
   if (
     ball.x - ball.radius < playerPaddle.x + playerPaddle.width &&
     ball.y > playerPaddle.y &&
@@ -84,8 +128,9 @@ function update() {
     ball.speedX = -ball.speedX * 1.05;
     ball.speedY *= 1.05;
     hitSound.currentTime = 0;
-    hitSound.play()
+    hitSound.play();
   }
+  
   if (
     ball.x + ball.radius > computerPaddle.x &&
     ball.y > computerPaddle.y &&
@@ -97,6 +142,7 @@ function update() {
     hitSound.currentTime = 0;
     hitSound.play();
   }
+  
   if (ball.x - ball.radius < 0) {
     missSound.currentTime = 0;
     missSound.play();
@@ -106,10 +152,12 @@ function update() {
     missSound.play();
     updateScore(true);
   }
+  
   const aiCenter = computerPaddle.y + computerPaddle.height / 2;
   const delta = ball.y - aiCenter;
   const threshold = 10;
   const missChance = 0.3;
+  
   if (Math.abs(delta) > threshold) {
     const direction = delta > 0 ? 1 : -1;
     if (Math.random() < missChance) {
@@ -120,6 +168,7 @@ function update() {
   }
   computerPaddle.y = Math.min(Math.max(computerPaddle.y, 0), canvas.height - computerPaddle.height);
 }
+
 function updateScore(playerScored) {
   if (playerScored) {
     playerScore++;
@@ -128,20 +177,22 @@ function updateScore(playerScored) {
     computerScore++;
     computerScoreElem.textContent = computerScore;
   }
+  
   if (playerScore >= WINNING_SCORE) {
     winSound.currentTime = 0;
     winSound.play();
-    alert("Congratulations buddy! Have a great day ahead 😊");
+    alert("Congratulations! You won!");
     resetGame();
   } else if (computerScore >= WINNING_SCORE) {
-    loseSound.curretTime = 0;
+    loseSound.currentTime = 0;
     loseSound.play();
-    alert("It's alright bud, stay calm and u may try again! 🫡");
+    alert("Computer won! Try again.");
     resetGame();
   } else {
     resetBall(playerScored);
   }
 }
+
 function resetGame() {
   playerScore = 0;
   computerScore = 0;
@@ -149,16 +200,17 @@ function resetGame() {
   computerScoreElem.textContent = computerScore;
   resetBall(true);
   gameOver = false;
-  pauseGame();
   startBtn.disabled = false;
   pauseBtn.disabled = true;
 }
+
 function resetBall(playerServe) {
   ball.x = canvas.width / 2;
   ball.y = canvas.height / 2;
   ball.speedX = 5 * (playerServe ? 1 : -1);
   ball.speedY = 5 * (Math.random() * 2 - 1);
 }
+
 function drawNet() {
   ctx.save();
   ctx.strokeStyle = "#39ff14";
@@ -172,6 +224,7 @@ function drawNet() {
   ctx.stroke();
   ctx.restore();
 }
+
 function drawBall() {
   ctx.save();
   ctx.fillStyle = "#39ff14";
@@ -182,6 +235,7 @@ function drawBall() {
   ctx.fill();
   ctx.restore();
 }
+
 function drawPaddle(paddle) {
   ctx.save();
   ctx.fillStyle = paddle.color;
@@ -190,6 +244,7 @@ function drawPaddle(paddle) {
   ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
   ctx.restore();
 }
+
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawNet();
@@ -197,11 +252,13 @@ function draw() {
   drawPaddle(playerPaddle);
   drawPaddle(computerPaddle);
 }
+
 function gameLoop() {
   update();
   draw();
   animationId = requestAnimationFrame(gameLoop);
 }
+
 function startGame() {
   if (!isRunning && !gameOver) {
     isRunning = true;
@@ -210,6 +267,7 @@ function startGame() {
     pauseBtn.disabled = false;
   }
 }
+
 function pauseGame() {
   if (isRunning) {
     isRunning = false;
@@ -218,9 +276,5 @@ function pauseGame() {
     pauseBtn.disabled = true;
   }
 }
-playerScoreElem.textContent = playerScore;
-computerScoreElem.textContent = computerScore;
-resetBall(true);
-startBtn.addEventListener("click", startGame);
-pauseBtn.addEventListener("click", pauseGame);
-resetBtn.addEventListener("click", resetGame);
+
+init();
