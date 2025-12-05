@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>Ping Pong</title>
@@ -7,11 +8,30 @@
   <link rel="stylesheet" href="game.css" />
   <link href="https://fonts.googleapis.com/css?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
+
 <body>
   <div id="gameContainer">
-    <div id="topBar">
-      <button id="backBtn" class="neon-btn">Back to Welcome</button>
+    <div id="difficultyModal" class="modal hidden">
+      <div class="modal-content">
+        <h2 class="neon-text">Select your Difficulty</h2>
+        <div id="difficultyButtons">
+          <button id="easySelect" class="neon-btn diff-btn">Easy</button>
+          <button id="normalSelect" class="neon-btn diff-btn">Normal</button>
+          <button id="hardSelect" class="neon-btn diff-btn">Hard</button>
+        </div>
+      </div>
     </div>
+
+    <div id="topBar">
+      <div id="rallyDisplay" class="neon-text">
+        Rally: <span id="rallyCount">0</span>
+      </div>
+      <div id="topRightControls">
+        <button id="muteBtn" class="neon-btn small-icon">🔊</button>
+        <button id="backBtn" class="neon-btn">Back</button>
+      </div>
+    </div>
+
     <div id="scoreBoard" class="neon-text">
       <span id="playerScore">0</span> | <span id="computerScore">0</span>
     </div>
@@ -24,12 +44,25 @@
     <div id="loveText" class="neon-text" style="margin-top:34px; font-size:1.3rem;">
       Made with ❤️ by Pulkit Singh
     </div>
+    <div id="gameOverModal" class="modal hidden">
+      <div class="modal-content">
+        <h2 id="modalTitle"></h2>
+        <p id="modalScore" class="neon-text">Final Score: 5-3</p>
+        <p id="bestRallyEver" class="neon-text">Best Rally Ever: 0</p>
+        <p id="newBestBadge" class="neon-text hidden">NEW BEST!</p>
+        <p id="modalDifficulty" class="neon-text">Mode: Normal</p>
+        <button id="playAgainBtn" class="neon-btn large">Play again</button>
+        <button id="downloadCardBtn" class="neon-btn large">Download Score Card</button>
+        <canvas id="shareCardCanvas" width="800" height="450" style="display: none;"></canvas>
+      </div>
+    </div>
   </div>
   <script src="game.js"></script>
   <script>
-    document.getElementById("backBtn").onclick = function() {
+    document.getElementById("backBtn").onclick = function () {
       window.location.href = "index.html";
     };
   </script>
 </body>
+
 </html>
