@@ -40,7 +40,9 @@ const MAX_TRAIL = 10;
 let rallyCount = 0;
 let maxRally = 0;
 const rallyCountElem = document.getElementById("rallyCount");
-let bestRallyEver = Number(localStorage.getItem('bestRallyEver') || 0);
+let bestRallyEverRaw = localStorage.getItem('bestRallyEver');
+let bestRallyEver = bestRallyEverRaw ? Number(bestRallyEverRaw) : 0;
+if (Number.isNaN(bestRallyEver)) bestRallyEver = 0;
 const bestRallyElem = document.getElementById('bestRallyEver');
 
 let aiMissChance = 0.3;
@@ -77,19 +79,17 @@ function showModal(won) {
   score.textContent = `Final Score: ${playerScore} - ${computerScore} | Highest Rally (current game): ${maxRally}`;
   modalDifficulty.textContent = `Mode: ${currentDifficulty}`;
 
-  let isNewBest = false;  
-  if (maxRally > bestRallyEver) {
+  newBestBadge.classList.add('hidden');
+
+  const previousBest = bestRallyEver;
+  if (maxRally > previousBest) {
     bestRallyEver = maxRally;
     localStorage.setItem('bestRallyEver', bestRallyEver);
-    isNewBest = true;
+    newBestBadge.classList.remove('hidden');
   }
+
   bestRallyElem.textContent = `ALL TIME Highest Rally: ${bestRallyEver}`;
 
-  if (isNewBest) {
-    newBestBadge.classList.remove('hidden');
-  } else {
-    newBestBadge.classList.add('hidden');
-  }
   modal.classList.remove('hidden');
   gameOver = true;
 }
@@ -115,6 +115,39 @@ function setupControls() {
   }, { passive: false });
 }
 
+function setupKeyboardControls() {
+  window.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      startGame();
+      return;
+    }
+    if (e.key === ' ') {
+      e.preventDefault();
+      if (isRunning) {
+        pauseGame();
+      } else if (!gameOver) {
+        startGame();
+      }
+      return;
+    }
+    if (e.key === 'r' || e.key === 'R') {
+      e.preventDefault();
+      resetGame();
+      return;
+    }
+    if (!isRunning || gameOver) return;
+
+    const step = 18;
+
+    if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') {
+      playerPaddle.y = Math.max(0, playerPaddle.y - step);
+    } else if (e.key === 's' || e.key === 'S' || e.key === 'ArrowDown') {
+      playerPaddle.y = Math.min(canvas.height - paddleHeight, playerPaddle.y + step);
+    }
+  });
+}
+
 function updateMuteState() {
   const volumeFactor = isMuted ? 0 : 1;
   hitSound.muted = isMuted;
@@ -122,6 +155,17 @@ function updateMuteState() {
   winSound.muted = isMuted;
   loseSound.muted = isMuted;
   muteBtn.textContent = isMuted ? "🔇" : "🔊";
+}
+
+function applyPaddleBounce(paddle) {
+  const paddleCenter = paddle.y + paddle.height / 2;
+  const relativeIntersectY = (ball.y - paddleCenter) / (paddle.height / 2);
+  const maxBounceAngle = Math.PI / 3;
+  const bounceAngle = relativeIntersectY * maxBounceAngle;
+  const speed = Math.sqrt(ball.speedX * ball.speedX + ball.speedY * ball.speedY) * 1.05;
+  const direction = paddle === playerPaddle ? 1 : -1;
+  ball.speedX = speed * Math.cos(bounceAngle) * direction;
+  ball.speedY = speed * Math.sin(bounceAngle);
 }
 
 function update() {
@@ -148,8 +192,7 @@ function update() {
     ball.y < playerPaddle.y + playerPaddle.height
   ) {
     ball.x = playerPaddle.x + playerPaddle.width + ball.radius;
-    ball.speedX = -ball.speedX * 1.05;
-    ball.speedY *= 1.05;
+    applyPaddleBounce(playerPaddle);
     hitSound.currentTime = 0;
     hitSound.play();
     createParticles(ball.x, ball.y);
@@ -164,8 +207,7 @@ function update() {
     ball.y < computerPaddle.y + computerPaddle.height
   ) {
     ball.x = computerPaddle.x - ball.radius;
-    ball.speedX = -ball.speedX * 1.05;
-    ball.speedY *= 1.05;
+    applyPaddleBounce(computerPaddle);
     hitSound.currentTime = 0;
     hitSound.play();
     createParticles(ball.x, ball.y);
@@ -220,12 +262,12 @@ function setDifficulty(level) {
   hardSelect.classList.remove('active');
 
   if (level === 'easy') {
-    aiMissChance = 0.5;
+    aiMissChance = 0.4;
     aiSpeed = 5;
     currentDifficulty = 'Easy';
     easySelect.classList.add('active');
   } else if (level === 'hard') {
-    aiMissChance = 0.1;
+    aiMissChance = 0.15;
     aiSpeed = 8;
     currentDifficulty = 'Hard'
     hardSelect.classList.add('active');
@@ -420,7 +462,7 @@ function drawShareCard() {
   const h = cardCanvas.height;
 
   cctx.clearRect(0, 0, w, h);
-  const gradient = cctx.createRadialGradient(w/2, h/2, 60, w/2, h/2, w/1.2);
+  const gradient = cctx.createRadialGradient(w / 2, h / 2, 60, w / 2, h / 2, w / 1.2);
   gradient.addColorStop(0, '#000000');
   gradient.addColorStop(1, '#020f02');
   cctx.fillStyle = gradient;
@@ -535,6 +577,7 @@ function init() {
   window.addEventListener('resize', resizeCanvas);
 
   setupControls();
+  setupKeyboardControls();
 
   setDifficulty('normal');
   easySelect.addEventListener("click", () => setDifficulty('easy'));
