@@ -116,7 +116,7 @@ canvas {
     box-shadow: 0 0 22px #13ff00, 0 0 38px #39ff14 inset;
     cursor: pointer;
     outline: none;
-    transition: bacground .25s, color .25s, box-shadow .25s, transform .18s;
+    transition: bacground 0.25s, color 0.25s, box-shadow 0.25s, transform 0.18s;
     font-family: inherit;
     position: relative;
 }
@@ -173,6 +173,11 @@ canvas {
     display: none;
 }
 
+#matchSummary {
+    font-size: 1rem;
+    margin-top: 6px;
+}
+
 .modal-content {
     text-align: center;
     transform: scale(0.7);
@@ -186,14 +191,62 @@ canvas {
     box-shadow: 0 0 18px #39ff14, 0 0 42px #13ff14, 0 0 70px #39ff14 inset;
 }
 
-#newBestBadge {
-    color: #39ff14;
-    font-size: 1.1rem;
-    letter-spacing: 0.15rem;
-    text-shadow: 0 0 15px #39ff14, 0 0 30px #13ff00;
+.score-grid {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    row-gap: 10px;
+    column-gap: 18px;
+    padding: 18px 20px;
+    border-radius: 14px;
+    background: radial-gradient(circle at top, #021602 0%, #000 55%);
+    box-shadow: 0 0 22px #39ff14, inset 0 0 28px rgba(57, 255, 20, 0.35);
+    border: 2px solid rgba(57, 255, 20, 0.7);
 }
 
-#newBestBadge.hidden {
+.score-label {
+    font-size: 0.8rem;
+    letter-spacing: 0.15rem;
+    color: #7dff7d;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+.score-value {
+    font-family: "Share Tech Mono", monospace;
+    font-size: 1.1rem;
+    color: #39ff14;
+    text-align: right;
+    padding: 4px 10px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.7);
+    box-shadow: 0 0 14px rgba(57, 255, 20, 0.6);
+}
+
+.small-summary {
+    font-size: 0.9rem;
+    margin: 4px 0 4px;
+}
+
+.tiny-note {
+    font-size: 0.75rem;
+    opacity: 0.8;
+    margin-top: 10px;
+}
+
+.badge {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    letter-spacing: 0.12rem;
+    background: #39ff14;
+    color: #000;
+    box-shadow: 0 0 18px #39ff14;
+}
+
+.badge.hidden {
     display: none;
 }
 
@@ -251,7 +304,7 @@ canvas {
         max-height: 310px;
     }
 
-    .non-btn {
+    .neon-btn {
         padding: 11px 16vw;
         font-size: 0.98rem;
     }
