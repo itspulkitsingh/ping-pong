@@ -92,7 +92,7 @@ function showModal(won) {
   const summaryBestRally = document.getElementById('bestRallyEver');
 
   title.textContent = won ? 'CONGRATULATIONS' : 'GAME OVER';
-  title.style.color = won ? '#39ff14' : '#ff4444';
+  title.style.color = won ? '#39ff14' : '#ff0000ff';
 
   matchSummary.textContent = `Rallies Played: ${totalRallies} · Longest rally: ${maxRally} · Mode: ${currentDifficulty}`
 
@@ -689,3 +689,4 @@ function init() {
 }
 
 window.addEventListener('load', init);
+
