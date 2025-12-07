@@ -52,14 +52,30 @@
     </div>
     <div id="gameOverModal" class="modal hidden">
       <div class="modal-content">
-        <h2 id="modalTitle"></h2>
-        <p id="modalScore" class="neon-text">Final Score: 5-3</p>
-        <p id="bestRallyEver" class="neon-text">Best Rally Ever: 0</p>
-        <p id="newBestBadge" class="neon-text hidden">New BEST!</p>
-        <p id="modalDifficulty" class="neon-text">Mode: Normal</p>
+        <h2 id="modalTitle" class="neon-text"></h2>
+        <p id="matchSummary" class="neon-text small-summary"></p>
+
+        <div id="gameOverStats" class="score-grid">
+          <div class="score-label">RESULT</div>
+          <div class="score-value" id="summaryResult"></div>
+
+          <div class="score-label">SCORE</div>
+          <div class="score-value" id="summaryScore"></div>
+
+          <div class="score-label">RALLIES</div>
+          <div class="score-value" id="summaryRallies"></div>
+
+          <div class="score-label">MODE</div>
+          <div class="score-value" id="modalDifficulty"></div>
+
+          <div class="score-label">ALL TIME LONGEST RALLY</div>
+          <div class="score-value" id="bestRallyEver"></div>
+        </div>
+
+        <span id="newBestBadge" class="badge hidden">NEW BEST!</span>
+
         <button id="playAgainBtn" class="neon-btn large">Play again</button>
         <button id="downloadCardBtn" class="neon-btn large">Download Score Card</button>
-        <canvas id="shareCardCanvas" width="800" height="450" style="display: none;"></canvas>
       </div>
     </div>
   </div>
