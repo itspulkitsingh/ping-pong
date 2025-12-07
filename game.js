@@ -44,10 +44,21 @@ let bestRallyEverRaw = localStorage.getItem('bestRallyEver');
 let bestRallyEver = bestRallyEverRaw ? Number(bestRallyEverRaw) : 0;
 if (Number.isNaN(bestRallyEver)) bestRallyEver = 0;
 const bestRallyElem = document.getElementById('bestRallyEver');
+let totalRallies = 0;
 
 let aiMissChance = 0.3;
 let aiSpeed = 6;
 let currentDifficulty = 'Normal';
+
+let baseBallSpeed = 5;
+let maxBallSpeed = 10;
+
+let isServing = false;
+let serveTimerId = null;
+
+function isDifficultyOpen() {
+  return !difficultyModal.classList.contains('hidden');
+}
 
 function resizeCanvas() {
   canvas.width = canvas.offsetWidth;
@@ -70,14 +81,26 @@ function resizeCanvas() {
 function showModal(won) {
   const modal = document.getElementById('gameOverModal');
   const title = document.getElementById('modalTitle');
-  const score = document.getElementById('modalScore');
   const modalDifficulty = document.getElementById('modalDifficulty');
   const newBestBadge = document.getElementById('newBestBadge');
 
-  title.textContent = won ? 'VICTORY!' : 'GAME OVER';
+  const matchSummary = document.getElementById('matchSummary');
+  const summaryResult = document.getElementById('summaryResult');
+  const summaryScore = document.getElementById('summaryScore');
+  const summaryRallies = document.getElementById('summaryRallies');
+  const summaryMode = document.getElementById('modalDifficulty');
+  const summaryBestRally = document.getElementById('bestRallyEver');
+
+  title.textContent = won ? 'CONGRATULATIONS' : 'GAME OVER';
   title.style.color = won ? '#39ff14' : '#ff4444';
-  score.textContent = `Final Score: ${playerScore} - ${computerScore} | Highest Rally (current game): ${maxRally}`;
-  modalDifficulty.textContent = `Mode: ${currentDifficulty}`;
+
+  matchSummary.textContent = `Rallies Played: ${totalRallies} · Longest rally: ${maxRally} · Mode: ${currentDifficulty}`
+
+  summaryResult.textContent = won ? 'VICTORY!' : 'DEFEAT';
+  summaryScore.textContent = `${playerScore} - ${computerScore}`;
+  summaryRallies.textContent = `${totalRallies}  |  LONGEST: ${maxRally}`;
+  summaryMode.textContent = `${currentDifficulty.toUpperCase()}`;
+  summaryBestRally.textContent = `${bestRallyEver}`;
 
   newBestBadge.classList.add('hidden');
 
@@ -88,7 +111,7 @@ function showModal(won) {
     newBestBadge.classList.remove('hidden');
   }
 
-  bestRallyElem.textContent = `ALL TIME Highest Rally: ${bestRallyEver}`;
+  bestRallyElem.textContent = `${bestRallyEver}`;
 
   modal.classList.remove('hidden');
   gameOver = true;
@@ -117,13 +140,17 @@ function setupControls() {
 
 function setupKeyboardControls() {
   window.addEventListener('keydown', e => {
+
+    const diffOpen = isDifficultyOpen();
+
     if (e.key === 'Enter') {
       e.preventDefault();
-      startGame();
+      if (!diffOpen) startGame();
       return;
     }
     if (e.key === ' ') {
       e.preventDefault();
+      if (diffOpen) return;
       if (isRunning) {
         pauseGame();
       } else if (!gameOver) {
@@ -133,7 +160,7 @@ function setupKeyboardControls() {
     }
     if (e.key === 'r' || e.key === 'R') {
       e.preventDefault();
-      resetGame();
+      if (!diffOpen) resetGame();
       return;
     }
     if (!isRunning || gameOver) return;
@@ -162,7 +189,8 @@ function applyPaddleBounce(paddle) {
   const relativeIntersectY = (ball.y - paddleCenter) / (paddle.height / 2);
   const maxBounceAngle = Math.PI / 3;
   const bounceAngle = relativeIntersectY * maxBounceAngle;
-  const speed = Math.sqrt(ball.speedX * ball.speedX + ball.speedY * ball.speedY) * 1.05;
+  let speed = Math.sqrt(ball.speedX * ball.speedX + ball.speedY * ball.speedY) * 1.05;
+  speed = Math.min(speed, maxBallSpeed);
   const direction = paddle === playerPaddle ? 1 : -1;
   ball.speedX = speed * Math.cos(bounceAngle) * direction;
   ball.speedY = speed * Math.sin(bounceAngle);
@@ -170,6 +198,10 @@ function applyPaddleBounce(paddle) {
 
 function update() {
   if (gameOver) return;
+
+  if (isServing) {
+    return;
+  }
 
   ball.trail.push({ x: ball.x, y: ball.y });
   if (ball.trail.length > MAX_TRAIL) ball.trail.shift();
@@ -197,6 +229,7 @@ function update() {
     hitSound.play();
     createParticles(ball.x, ball.y);
     rallyCount++;
+    totalRallies++;
     rallyCountElem.textContent = rallyCount;
     maxRally = Math.max(maxRally, rallyCount);
   }
@@ -212,6 +245,7 @@ function update() {
     hitSound.play();
     createParticles(ball.x, ball.y);
     rallyCount++;
+    totalRallies++;
     rallyCountElem.textContent = rallyCount;
   }
 
@@ -262,18 +296,24 @@ function setDifficulty(level) {
   hardSelect.classList.remove('active');
 
   if (level === 'easy') {
-    aiMissChance = 0.4;
+    aiMissChance = 0.35;
     aiSpeed = 5;
+    baseBallSpeed = 4;
+    maxBallSpeed = 8;
     currentDifficulty = 'Easy';
     easySelect.classList.add('active');
   } else if (level === 'hard') {
     aiMissChance = 0.15;
     aiSpeed = 8;
+    baseBallSpeed = 5.5;
+    maxBallSpeed = 11;
     currentDifficulty = 'Hard'
     hardSelect.classList.add('active');
   } else {
-    aiMissChance = 0.3;
+    aiMissChance = 0.25;
     aiSpeed = 6;
+    baseBallSpeed = 5;
+    maxBallSpeed = 9.5;
     currentDifficulty = 'Normal';
     normalSelect.classList.add('active');
   }
@@ -301,7 +341,7 @@ function updateScore(playerScored) {
     loseSound.play();
     showModal(false);
   } else {
-    resetBall(playerScored);
+    startServe(playerScored);
   }
 }
 
@@ -324,7 +364,7 @@ function resetGame() {
   computerPaddle.x = canvas.width - paddleWidth;
   computerPaddle.y = (canvas.height - paddleHeight) / 2;
 
-  resetBall(true);
+  startServe(true);
 
   startBtn.disabled = false;
   pauseBtn.disabled = true;
@@ -341,6 +381,7 @@ function resetGame() {
   rallyCount = 0;
   rallyCountElem.textContent = rallyCount;
   maxRally = 0;
+  totalRallies = 0;
 
   document.getElementById('newBestBadge').classList.add('hidden')
 }
@@ -350,8 +391,29 @@ function resetBall(playerServe) {
   ball.y = canvas.height / 2;
   ball.trail = [];
   particles = [];
-  ball.speedX = 5 * (playerServe ? 1 : -1);
-  ball.speedY = 5 * (Math.random() * 2 - 1);
+  ball.speedX = baseBallSpeed * (playerServe ? 1 : -1);
+  ball.speedY = baseBallSpeed * (Math.random() * 2 - 1);
+}
+
+function startServe(playerServe) {
+  isServing = true;
+  resetBall(playerServe);
+
+  let pulseScale = 1;
+  let pulseDirection = 1;
+
+  const pulseInterval = setInterval(() => {
+    pulseScale += 0.02 * pulseDirection;
+    if (pulseScale > 1.15) pulseDirection = -1;
+    if (pulseScale < 1.0) pulseDirection = 1;
+    ball.pulseScale = pulseScale;
+  }, 16);
+
+  serveTimerId = setTimeout(() => {
+    isServing = false;
+    ball.pulseScale = 1;
+    clearInterval(pulseInterval);
+  }, 450);
 }
 
 function drawNet() {
@@ -373,8 +435,9 @@ function drawBall() {
   ctx.fillStyle = "#39ff14";
   ctx.shadowColor = "#39ff14";
   ctx.shadowBlur = 23;
+  const r = ball.radius * (ball.pulseScale || 1);
   ctx.beginPath();
-  ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+  ctx.arc(ball.x, ball.y, r, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
 }
@@ -527,6 +590,7 @@ function gameLoop() {
 }
 
 function startGame() {
+  if (isDifficultyOpen()) return;
   if (!isRunning && !gameOver) {
     isRunning = true;
     animationId = requestAnimationFrame(gameLoop);
@@ -553,9 +617,10 @@ function init() {
     radius: 10,
     speedX: 5,
     speedY: 5,
-    glowColor: '#39ff14'
+    glowColor: '#39ff14',
+    trail: [],
+    pulseScale: 1,
   };
-  ball.trail = [];
 
   playerPaddle = {
     x: 0,
