@@ -1,5 +1,8 @@
 body {
-    background: #000;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background: radial-gradient(circle at top, #041a04 0%, #000 55%);
     min-height: 100vh;
     margin: 0;
     display: flex;
@@ -7,27 +10,79 @@ body {
     justify-content: center;
     font-family: 'Share Tech Mono', 'Consolas', monospace;
     height: 100vh;
-    background-image: url('https://i.pinimg.com/originals/90/89/b3/9089b3609b6595940092a50f59b027fa.gif');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-attachment: fixed;
+    cursor: url("./cursor/cursor.png") 0 0, auto;
+    overflow: hidden;
 }
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 50%;
+    width: 70vw;
+    height: 120vh;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse at center, rgba(57, 255, 20, 0.28) 0%, rgba(57, 255, 20, 0.04) 55%, transparent 75%);
+    filter: blur(2px);
+    opacity: 0.8;
+    pointer-events: none;
+    animation: glowSweep 10s ease-in-out infinite alternate;
+    z-index: 0;
+}
+
+@keyframes glowSweep {
+    0% {
+        transform: translateX(-55%) translateY(-4%);
+        opacity: 0.7;
+    }
+
+    50% {
+        transform: translateX(-50%) translateY(0%);
+        opacity: 0.9;
+    }
+
+    100% {
+        transform: translateX(-45%) translateY(4%);
+        opacity: 0.7;
+    }
+}
+
+button,
+a,
+.neon-btn {
+    cursor: url("./cursor/select-cursor.png") 6 2, pointer;
+}
+
 .container {
     text-align: center;
     padding: 60px 22px;
     box-shadow: 0 0 45px #39ff14;
     border-radius: 20px;
-    background: rgba(0,0,0,0.97);
+    background: radial-gradient(circle at top, rgba(0, 0, 0, 0.82), rgba(0, 0, 0, 0.65));
+    position: relative;
+    z-index: 1;
+    border: 1px solid rgba(57, 255, 20, 0.55);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transition: transform 0.25s ease-out, box-shadow 0.25s ease-out, border-color 0.25s ease-out;
 }
+
+.container:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0 60px #39ff14, 0 0 110px rgba(57, 255, 20, 0.6);
+    border-color: rgba(55, 255, 20, 0.664);
+}
+
 .neon-letter {
     transition: color 0.25s, text-shadow 0.25s;
     display: inline-block;
 }
+
 .neon-letter:hover {
     color: #cbffcb;
     text-shadow: 0 0 24px #39ff14, 0 0 43px #14ff84, 0 0 62px #48ff00;
 }
+
 .neon-text {
     color: #39ff14;
     font-size: 2rem;
@@ -35,9 +90,11 @@ body {
     text-shadow: 0 0 8px #39ff14, 0 0 20px #13ff00;
     transition: text-shadow 0.3s;
 }
+
 .neon-text:hover {
     text-shadow: 0 0 15px #39ff14, 0 0 35px #13ff00, 0 0 55px #48ff00;
 }
+
 .neon-btn {
     margin-top: 30px;
     padding: 17px 48px;
@@ -47,13 +104,13 @@ body {
     font-size: 1.25rem;
     border: 3px solid #39ff14;
     border-radius: 14px;
-    text-shadow: 0 0  8px #39ff14;
+    text-shadow: 0 0 8px #39ff14;
     box-shadow: 0 0 22px #13ff00, 0 0 38px #39ff14 inset;
-    cursor: pointer;
     outline: none;
     transition: background 0.3s, color 0.3s, box-shadow 0.3s, transform 0.18s;
     position: relative;
 }
+
 .neon-btn:after {
     content: '';
     position: absolute;
@@ -67,12 +124,14 @@ body {
     opacity: 0;
     transition: opacity 0.4s;
 }
+
 .neon-btn:hover {
     background: #39ff14;
     color: #000;
     box-shadow: 0 0 60px #39ff14;
     transform: scale(1.04);
 }
+
 .neon-btn:hover:after {
     opacity: 1;
 }
