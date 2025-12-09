@@ -11,10 +11,9 @@
 </head>
 
 <body>
-
+  <canvas id="bgCanvas"></canvas>
   <div id="pageLoader"></div>
-
-
+  
   <div class="container">
     <h1 class="neon-text" id="mainTitle">Welcome to the Cool Ping Pong!</h1>
     <p class="neon-text" id="introText">
@@ -30,6 +29,7 @@
   </div>
   <script src="./vanillajs/vanilla-tilt.min.js"></script>
   <script src="./pageloader-script/pageloader.js"></script>
+  <script src="./bg/bg.js"></script>
   <script>
     function wrapLetters(id) {
       const el = document.getElementById(id);
