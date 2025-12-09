@@ -1,4 +1,5 @@
 body {
+    position: relative;
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
@@ -47,6 +48,15 @@ body::before {
     }
 }
 
+#bgCanvas {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+}
+
 button,
 a,
 .neon-btn {
@@ -55,15 +65,18 @@ a,
 
 .container {
     text-align: center;
-    padding: 60px 22px;
-    box-shadow: 0 0 45px #39ff14;
+    padding: 60px 40px;
+    max-width: 900px;
+    width: 80vw;
+    margin: 0 auto;
+    box-shadow: 0 0 35px #39ff14;
     border-radius: 20px;
-    background: radial-gradient(circle at top, rgba(0, 0, 0, 0.82), rgba(0, 0, 0, 0.65));
+    background: radial-gradient(circle at top, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.70));
     position: relative;
     z-index: 1;
     border: 1px solid rgba(57, 255, 20, 0.55);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     transition: transform 0.25s ease-out, box-shadow 0.25s ease-out, border-color 0.25s ease-out;
 }
 
