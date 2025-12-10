@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="./game.css">
   <link rel="stylesheet" href="./pageloader-script/pageloader.css">
   <link href="https://fonts.googleapis.com/css?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./musicplayersrc/music.css">
 </head>
 
 <body>
@@ -85,6 +86,31 @@
       </div>
     </div>
   </div>
+
+  <div id="musicDock">
+    <svg id="musicWaveBg" viewBox="0 0 340 80" preserveAspectRatio="none"></svg>
+    <div id="musicControls">
+      <button class="music-btn" id="musicRestart" title="Restart">
+        <svg class="music-icon" viewBox="0 0 32 32">
+          <polygon points="21,7 9,16 21,25" />
+          <rect x="5" y="7" width="3.2" height="18" rx="1.5"/>
+        </svg>
+      </button>
+      <button id="musicPlay" title="Play/Pause">
+        <svg id=""musicMainIcon" class="music-icon" viewBox="0 0 32 32">
+          <polygon points="13,10 22,16 13,22"/>
+        </svg>
+      </button>
+      <button class="music-btn" id="musicLoop" title="Loop">
+        <svg class="music-icon" viewBox="0 0 32 32">
+          <polygon points="11,7 23,16 11,25"/>
+          <rect x="23.8" y="7" width="3.2" height="18" rx="1.5"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <audio id="musicAudio" preload="auto"></audio>
+
   <script src="game.js"></script>
   <script src="./vanillajs/vanilla-tilt.min.js"></script>
   <script src="./pageloader-script/pageloader.js"></script>
