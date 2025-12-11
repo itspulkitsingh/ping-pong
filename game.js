@@ -184,6 +184,14 @@ function updateMuteState() {
   muteBtn.textContent = isMuted ? "🔇" : "🔊";
 }
 
+muteBtn.addEventListener('click', () => {
+  if (window.NeonMusic) {
+    window.NeonMusic.toggle();
+    const nowPlaying = window.NeonMusic.isPlaying();
+    muteBtn.textContent = nowPlaying ? "🔇" : "🔊";
+  }
+});
+
 function applyPaddleBounce(paddle) {
   const paddleCenter = paddle.y + paddle.height / 2;
   const relativeIntersectY = (ball.y - paddleCenter) / (paddle.height / 2);
