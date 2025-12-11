@@ -8,13 +8,13 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Share+Tech+Mono&display=swap">
   <link rel="stylesheet" href="./welcome.css">
   <link rel="stylesheet" href="./pageloader-script/pageloader.css">
-  <link rel="stylesheet" href="./musicplayersrc/music.css">
+  <link rel="stylesheet" href="./music.css">
 </head>
 
 <body>
   <canvas id="bgCanvas"></canvas>
   <div id="pageLoader"></div>
-  
+
   <div class="container">
     <h1 class="neon-text" id="mainTitle">Welcome to the Cool Ping Pong!</h1>
     <p class="neon-text" id="introText">
@@ -34,25 +34,26 @@
     <div id="musicControls">
       <button class="music-btn" id="musicRestart" title="Restart">
         <svg class="music-icon" viewBox="0 0 32 32">
-          <polygon points="21,7 9,16 21,25"/>
-          <rect x="5" y="7" width="3.2" height="18" rx="1.5"/>
+          <polygon points="21,7 9,16 21,25" />
+          <rect x="5" y="7" width="3.2" height="18" rx="1.5" />
         </svg>
       </button>
       <button id="musicPlay" title="Play/Pause">
         <svg id="musicMainIcon" class="music-icon" viewBox="0 0 32 32">
-          <polygon points="13,10 22,16 13,22"/>
+          <polygon points="13,10 22,16 13,22" />
         </svg>
       </button>
       <button class="music-btn" id="musicLoop" title="Loop">
         <svg class="music-icon" viewBox="0 0 32 32">
-          <polygon points="11,7 23,16 11,25"/>
-          <rect x="23.8" y="7" width="3.2" height="18" rx="1.5"/>
+          <polygon points="11,7 23,16 11,25" />
+          <rect x="23.8" y="7" width="3.2" height="18" rx="1.5" />
         </svg>
       </button>
     </div>
   </div>
   <audio id="musicAudio" preload="auto"></audio>
 
+  <script src="./music.js"></script>
   <script src="./vanillajs/vanilla-tilt.min.js"></script>
   <script src="./pageloader-script/pageloader.js"></script>
   <script src="./bg/bg.js"></script>
