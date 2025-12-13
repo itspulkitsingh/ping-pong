@@ -1,3 +1,1 @@
-- set up the website to be scalable and same and good UI for all devices even as very big as possible to as small as possible
-- set up the songs to be able to stream all the songs there in a random way;
-- the song should smoothly play while the page is loading to another
+
