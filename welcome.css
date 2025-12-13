@@ -48,6 +48,40 @@ body::before {
     }
 }
 
+#screenRoot > div {
+    will-change: transform, opacity;
+}
+
+.screen-slide-in {
+    animation: screenSlideIn 0.45s ease-out forwards;
+}
+
+.screen-slide-out {
+    animation: screenSlideOut 0.35s ease-in forwards;
+}
+
+@keyframes screenSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes screenSlideOut {
+    from {
+        opacity: 1;
+        transform: translate(0) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(25px) scale(0.98);
+    }
+}
+
 #bgCanvas {
     position: fixed;
     inset: 0;

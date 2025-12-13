@@ -22,6 +22,11 @@
     const playerBar = document.getElementById('musicDock');
     const svg = document.getElementById('musicWaveBg');
     const audio = document.getElementById('musicAudio');
+    const infoIndex = document.getElementById('musicIndex');
+
+    function updateInfo() {
+        if (infoIndex) infoIndex.textContent = (currentSongIndex + 1).toString();
+    }
 
     if (!playBtn || !audio) return;
 
@@ -71,6 +76,7 @@
 
     function loadCurrentSong() {
         audio.src = songs[currentSongIndex];
+        updateInfo();
     }
 
     function playSong() {
@@ -101,6 +107,20 @@
         playBtn.classList.remove('playing');
         setIcon('play');
         saveState();
+    }
+
+    function fadeTo(target, duration = 500) {
+        const start = audio.volume;
+        const diff = target - start;
+        if (diff === 0) return;
+        const startTime = performance.now();
+
+        function step(now) {
+            const t = Math.min(1, (now - startTime) / duration);
+            audio.volume = start + diff * t;
+            if (t < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
     }
 
     playBtn.addEventListener('click', () => {
@@ -231,15 +251,32 @@
         isDragging = false;
     });
 
+    document.addEventListener('mousemove', (e) => {
+        if (!playerBar || isDragging) return;
+
+        const cx = window.innerWidth / 2;
+        const cy = window.innerHeight / 2;
+        const dx = (e.clientX - cx) / cx;
+        const dy = (e.clientY - cy) / cy;
+        const maxTilt = 3;
+
+        playerBar.style.transform = `rotateX(${ -dy * maxTilt }deg) rotateY(${ dx * maxTilt }deg)`;
+    });
+
+    document.addEventListener('mouseleave', () => {
+        if (!playerBar || isDragging) return;
+        playerBar.style.transform = '';
+    });
+
     window.NeonMusic = {
         play() { if (!isPlaying) playSong(); },
         pause() { if (isPlaying) pauseSong(); },
         toggle() { isPlaying ? pauseSong() : playSong(); },
         isPlaying: () => isPlaying,
-        pulse(active) {
-            const dock = document.getElementById('musicDock');
-            if (!dock) return;
-            dock.classList.toggle('music-pulse', !!active);
-        }
+        fadeDown() { fadeTo(0.25, 600); },
+        fadeUp() { fadeTo(1, 400); }
     };
+
+    const dock = document.getElementById('musicDock');
+    if (dock) dock.classList.add('idle-glow');
 })();

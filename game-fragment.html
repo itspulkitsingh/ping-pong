@@ -1,0 +1,73 @@
+<div id="gameScreen">
+    <div id="gameContainer" class="tilt">
+        <div id="difficultyModal" class="modal hidden">
+            <div class="modal-content">
+                <h2 class="neon-text">Select your Difficulty</h2>
+                <div id="difficultyButtons">
+                    <button id="easySelect" class="neon-btn diff-btn">Easy</button>
+                    <button id="normalSelect" class="neon-btn diff-btn">Normal</button>
+                    <button id="hardSelect" class="neon-btn diff-btn">Hard</button>
+                </div>
+            </div>
+        </div>
+
+        <canvas id="shareCardCanvas" width="900" height="500" style="display: none;"></canvas>
+
+        <div id="topBar">
+            <div id="rallyDisplay" class="neon-text">
+                Rally: <span id="rallyCount">0</span>
+            </div>
+            <div id="topRightControls">
+                <button id="muteBtn" class="neon-btn small-icon">🔊</button>
+                <button id="backBtn" class="neon-btn">Back</button>
+            </div>
+        </div>
+
+        <div id="scoreBoard" class="neon-text">
+            <span id="playerScore">0</span> | <span id="computerScore">0</span>
+        </div>
+        <canvas id="gameCanvas" width="800" height="450"></canvas>
+        <p id="controlsHint" class="neon-text">
+            Controls: Mouse / Touch or W / S / ↑ / ↓
+        </p>
+        <p id="controlsHint" class="neon-text">
+            · Enter = Start · Space = Pause / Resume · R = Reset ·
+        </p>
+        <div id="controls">
+            <button id="startBtn" class="neon-btn">Start</button>
+            <button id="pauseBtn" class="neon-btn" disabled>Pause</button>
+            <button id="resetBtn" class="neon-btn">Reset</button>
+        </div>
+        <div id="loveText" class="neon-text" style="margin-top:34px; font-size:1.3rem;">
+            Made with ❤️ by Pulkit Singh
+        </div>
+        <div id="gameOverModal" class="modal hidden">
+            <div class="modal-content">
+                <h2 id="modalTitle" class="neon-text"></h2>
+                <p id="matchSummary" class="neon-text small-summary"></p>
+
+                <div id="gameOverStats" class="score-grid">
+                    <div class="score-label">RESULT</div>
+                    <div class="score-value" id="summaryResult"></div>
+
+                    <div class="score-label">SCORE</div>
+                    <div class="score-value" id="summaryScore"></div>
+
+                    <div class="score-label">RALLIES</div>
+                    <div class="score-value" id="summaryRallies"></div>
+
+                    <div class="score-label">MODE</div>
+                    <div class="score-value" id="modalDifficulty"></div>
+
+                    <div class="score-label">ALL TIME LONGEST RALLY</div>
+                    <div class="score-value" id="bestRallyEver"></div>
+                </div>
+
+                <span id="newBestBadge" class="badge hidden">NEW BEST!</span>
+
+                <button id="playAgainBtn" class="neon-btn large">Play again</button>
+                <button id="downloadCardBtn" class="neon-btn large">Download Score Card</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -13,10 +13,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: box-shadow 0.25s ease-out, transform 0.18s ease-out;
 }
 
 #musicDock:active {
     transform: scale(0.975);
+}
+
+#musicDock:hover {
+    box-shadow: 0 0 32px #39ff14, 0 0 80px rgba(57, 255, 20, 0.9);
+    transform: translateY(-1px);
 }
 
 #musicWaveBg {
@@ -79,14 +85,13 @@
     transition: filter 0.2s;
 }
 
-#musicPlay.playing {
-    filter: drop-shadow(0 0 32px #39ff14);
-}
-
-#musicDock.music-pulse {
-    box-shadow: 0 0 40px #39ff14, 0 0 90px rgba(57, 255, 20, 0.9);
-}
-
-#musicDock.music-pulse #musicPlay {
-    filter: drop-shadow(0 0 40px #39ff14);
+.music-info {
+    position: absolute;
+    left: 22px;
+    top: 10px;
+    font-size: 0.72rem;
+    letter-spacing: 0.12rem;
+    color: #7dff7d;
+    opacity: 0.8;
+    text-transform: uppercase;
 }

@@ -7,27 +7,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Share+Tech+Mono&display=swap">
   <link rel="stylesheet" href="./welcome.css">
-  <link rel="stylesheet" href="./pageloader-script/pageloader.css">
   <link rel="stylesheet" href="./music.css">
+  <link rel="stylesheet" href="./game.css">
+  <link rel="stylesheet" href="./pageloader-script/pageloader.css">
 </head>
 
 <body>
   <canvas id="bgCanvas"></canvas>
   <div id="pageLoader"></div>
-
-  <div class="container">
-    <h1 class="neon-text" id="mainTitle">Welcome to the Cool Ping Pong!</h1>
-    <p class="neon-text" id="introText">
-      Experience a classic Ping Pong game in retro neon style with mind calming music!
-    </p>
-    <p class="neon-text">
-      <b> Rules:</b> Challenge the computer, Reach 5 points first, Calm yourself with the retro glowing green effects!
-    </p>
-    <p class="neon-text" id="descText">
-      <b>Enjoy!</b>
-    </p>
-    <button id="enterBtn" class="neon-btn">Enter Game</button>
-  </div>
 
   <div id="musicDock">
     <svg id="musicWaveBg" viewBox="0 0 340 80" preserveAspectRatio="none"></svg>
@@ -49,15 +36,55 @@
           <rect x="23.8" y="7" width="3.2" height="18" rx="1.5" />
         </svg>
       </button>
+      <div id="musicInfo" class="music-info">Track <span id="musicIndex">1</span> / 12</div>
     </div>
   </div>
   <audio id="musicAudio" preload="auto"></audio>
 
+  <div id="screenRoot" class="tilt">
+    <div id="welcomeScreen" class="screen-slide-in">
+      <div class="container">
+        <h1 class="neon-text" id="mainTitle">Welcome to the Cool Ping Pong!</h1>
+        <p class="neon-text" id="introText">
+          Experience a classic Ping Pong game in retro neon style with mind calming music!
+        </p>
+        <p class="neon-text">
+          <b> Rules:</b> Challenge the computer, Reach 5 points first, Calm yourself with the retro glowing green
+          effects!
+        </p>
+        <p class="neon-text" id="descText">
+          <b>Enjoy!</b>
+        </p>
+        <button id="enterGameBtn" class="neon-btn">Enter Game</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./bg/bg.js"></script>
   <script src="./music.js"></script>
+  <script src="./game.js"></script>
+  <script src="./app.js"></script>
   <script src="./vanillajs/vanilla-tilt.min.js"></script>
   <script src="./pageloader-script/pageloader.js"></script>
-  <script src="./bg/bg.js"></script>
+
+
   <script>
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.PageLoader && window.PageLoader.show && window.PageLoader.hide) {
+        window.PageLoader.show();
+        setTimeout(() => {
+          window.PageLoader.hide();
+        }, 2000);
+      } else {
+        const loader = document.getElementById('pageLoader');
+        if (!loader) return;
+        loader.classList.add('active');
+        setTimeout(() => loader.classList.remove('active'), 2000);
+      }
+    });
+
+
     function wrapLetters(id) {
       const el = document.getElementById(id);
       el.innerHTML = el.textContent.split('').map(ch =>
@@ -68,11 +95,18 @@
     wrapLetters('introText');
     wrapLetters('descText');
 
-    document.getElementById("enterBtn").onclick = function () {
-      window.location.href = "game.html";
-    }
     VanillaTilt.init(document.querySelectorAll(".container"), { max: 10, speed: 400, });
-    VanillaTilt.init(document.querySelectorAll(".neon-btn"))
+    VanillaTilt.init(document.querySelectorAll(".neon-btn"));
+
+    window.addEventListener('click', function onFirstClick() {
+      if (window.NeonMusic) {
+        const audio = document.getElementById('musicAudio');
+        if (audio && audio.paused && !audio.currentTime) {
+        }
+      }
+      window.removeEventListener('click', onFirstClick);
+    });
+
   </script>
 </body>
 
