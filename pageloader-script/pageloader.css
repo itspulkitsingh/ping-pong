@@ -1,25 +1,33 @@
 #pageLoader {
-    position: absolute;
+    position: fixed;
     inset: 0;
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     background: radial-gradient(circle at top, #020b02 0%, #000 60%);
-    z-index: 9999;
+    z-index: 999;
     transition: opacity 0.4s ease-out, visibility 0.4s ease-out;
 }
+
+#pageLoader.active {
+    display: flex;
+    opacity: 1;
+    visibility: visible;
+}
+
 
 #pageLoader.hidden {
     opacity: 0;
     visibility: hidden;
 }
 
-#pageLoader::before, #pageLoader::after {
+#pageLoader::before,
+#pageLoader::after {
     content: '';
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
     width: 0;
     height: 0;
     border-radius: 50%;
@@ -39,9 +47,11 @@
         box-shadow: 0 0 10px #39ff14;
         opacity: 1;
     }
+
     70% {
         opacity: 1;
     }
+
     100% {
         width: 200px;
         height: 200px;
