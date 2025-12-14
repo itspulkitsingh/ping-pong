@@ -332,6 +332,10 @@ a,
     font-size: 1.2rem;
 }
 
+.hidden {
+    display: none !important;
+}
+
 @media (max-width: 600px) {
     #topBar {
         top: 10px;

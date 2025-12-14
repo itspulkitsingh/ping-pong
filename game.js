@@ -14,6 +14,20 @@
     const pauseBtn = root.querySelector("#pauseBtn");
     const resetBtn = root.querySelector("#resetBtn");
 
+    const backBtn = root.querySelector("#backBtn");
+
+    function lockBackButton() {
+      if (!backBtn) return;
+      backBtn.disabled = true;
+      backBtn.classList.add('disabled');
+    }
+
+    function unlockBackButton() {
+      if (!backBtn) return;
+      backBtn.disabled = false;
+      backBtn.classList.remove('disabled');
+    }
+
     const WINNING_SCORE = 5;
     const paddleHeight = 90;
     const paddleWidth = 12;
@@ -120,6 +134,7 @@
 
       modal.classList.remove('hidden');
       gameOver = true;
+      unlockBackButton();
     }
 
     function hideModal() {
@@ -188,14 +203,6 @@
       muteBtn.textContent = isMuted ? "🔇" : "🔊";
     }
 
-    muteBtn.addEventListener('click', () => {
-      if (window.NeonMusic) {
-        window.NeonMusic.toggle();
-        const nowPlaying = window.NeonMusic.isPlaying();
-        muteBtn.textContent = nowPlaying ? "🔇" : "🔊";
-      }
-    });
-
     function applyPaddleBounce(paddle) {
       const paddleCenter = paddle.y + paddle.height / 2;
       const relativeIntersectY = (ball.y - paddleCenter) / (paddle.height / 2);
@@ -218,7 +225,9 @@
       ball.trail.push({ x: ball.x, y: ball.y });
       if (ball.trail.length > MAX_TRAIL) ball.trail.shift();
 
-      const speedScale = delta * 60;
+      let speedScale = delta * 60;
+      if (!Number.isFinite(speedScale) || speedScale <= 0) speedScale = 1;
+      if (speedScale > 3) speedScale = 3;
 
       ball.x += ball.speedX * speedScale;
       ball.y += ball.speedY * speedScale;
@@ -311,24 +320,24 @@
       hardSelect.classList.remove('active');
 
       if (level === 'easy') {
-        aiMissChance = 0.35;
-        aiSpeed = 5;
-        baseBallSpeed = 4;
-        maxBallSpeed = 8;
-        currentDifficulty = 'Easy';
-        easySelect.classList.add('active');
-      } else if (level === 'hard') {
-        aiMissChance = 0.15;
-        aiSpeed = 8;
-        baseBallSpeed = 5.5;
-        maxBallSpeed = 11;
-        currentDifficulty = 'Hard'
-        hardSelect.classList.add('active');
-      } else {
-        aiMissChance = 0.25;
+        aiMissChance = 0.3;
         aiSpeed = 6;
         baseBallSpeed = 5;
         maxBallSpeed = 9.5;
+        currentDifficulty = 'Easy';
+        easySelect.classList.add('active');
+      } else if (level === 'hard') {
+        aiMissChance = 0.10;
+        aiSpeed = 9;
+        baseBallSpeed = 6;
+        maxBallSpeed = 12.5;
+        currentDifficulty = 'Hard'
+        hardSelect.classList.add('active');
+      } else {
+        aiMissChance = 0.20;
+        aiSpeed = 7.5;
+        baseBallSpeed = 5.5;
+        maxBallSpeed = 11;
         currentDifficulty = 'Normal';
         normalSelect.classList.add('active');
       }
@@ -398,7 +407,23 @@
       maxRally = 0;
       totalRallies = 0;
 
-      root.querySelector('#newBestBadge').classList.add('hidden')
+      root.querySelector('#newBestBadge').classList.add('hidden');
+
+      showDifficultyModal();
+
+      startBtn.textContent = 'Start';
+      startBtn.disabled = false;
+      pauseBtn.disabled = true;
+      pauseBtn.classList.add('hidden');
+
+      resetBtn.disabled = true;
+      resetBtn.classList.add('hidden');
+
+      unlockBackButton();
+      if (backBtn) {
+        backBtn.textContent = 'Back';
+        backBtn.classList.remove('hidden');
+      }
     }
 
     function resetBall(playerServe) {
@@ -618,9 +643,19 @@
       if (!isRunning && !gameOver) {
         isRunning = true;
         lastTime = null;
+        lockBackButton();
+        if (backBtn) backBtn.classList.add('hidden');
+
         animationId = requestAnimationFrame(gameLoop);
+
         startBtn.disabled = true;
+        startBtn.classList.add('hidden');
+
         pauseBtn.disabled = false;
+        pauseBtn.classList.remove('hidden');
+
+        resetBtn.disabled = true;
+        resetBtn.classList.add('hidden');
       }
     }
 
@@ -628,8 +663,22 @@
       if (isRunning) {
         isRunning = false;
         cancelAnimationFrame(animationId);
+
+        startBtn.textContent = 'Resume';
         startBtn.disabled = false;
+        startBtn.classList.remove('hidden');
+
         pauseBtn.disabled = true;
+        pauseBtn.classList.add('hidden');
+
+        resetBtn.disabled = false;
+        resetBtn.classList.remove('hidden');
+
+        if (backBtn) {
+          unlockBackButton();
+          backBtn.textContent = 'BACK';
+          backBtn.classList.remove('hidden');
+        }
       }
     }
 
@@ -681,7 +730,20 @@
         hideModal();
         resetGame();
         showDifficultyModal();
+        startBtn.textContent = 'Start';
+        startBtn.disabled = false;
+        startBtn.classList.remove('hidden');
       });
+
+      const modalBackBtn = root.querySelector('#modalBackBtn');
+
+      if (modalBackBtn && backBtn) {
+        modalBackBtn.addEventListener('click', () => {
+          hideModal();
+          unlockBackButton();
+          backBtn.click();
+        })
+      }
 
       easySelect.addEventListener("click", () => {
         setDifficulty('easy');
@@ -699,6 +761,9 @@
       setDifficulty('normal');
       startBtn.disabled = false;
       pauseBtn.disabled = true;
+      pauseBtn.classList.add('hidden');
+      resetBtn.disabled = true;
+      resetBtn.classList.add('hidden');
       gameOver = false;
 
       showDifficultyModal();
@@ -711,6 +776,8 @@
       })
 
       root.querySelector('#downloadCardBtn').addEventListener('click', downloadShareCard);
+
+      unlockBackButton();
     }
 
     init();
