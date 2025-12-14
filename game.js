@@ -32,6 +32,7 @@
     let animationId = null;
     let isRunning = false;
     let gameOver = false;
+    let lastTime = null;
     let ball = {};
     let playerPaddle = {};
     let computerPaddle = {};
@@ -207,7 +208,7 @@
       ball.speedY = speed * Math.sin(bounceAngle);
     }
 
-    function update() {
+    function update(delta) {
       if (gameOver) return;
 
       if (isServing) {
@@ -217,8 +218,10 @@
       ball.trail.push({ x: ball.x, y: ball.y });
       if (ball.trail.length > MAX_TRAIL) ball.trail.shift();
 
-      ball.x += ball.speedX;
-      ball.y += ball.speedY;
+      const speedScale = delta * 60;
+
+      ball.x += ball.speedX * speedScale;
+      ball.y += ball.speedY * speedScale;
 
       if (ball.y - ball.radius < 0) {
         ball.y = ball.radius;
@@ -271,24 +274,25 @@
       }
 
       const aiCenter = computerPaddle.y + computerPaddle.height / 2;
-      const delta = ball.y - aiCenter;
+      const aiDelta = ball.y - aiCenter;
       const threshold = 10;
 
-      if (Math.abs(delta) > threshold) {
-        const direction = delta > 0 ? 1 : -1;
+      if (Math.abs(aiDelta) > threshold) {
+        const direction = aiDelta > 0 ? 1 : -1;
+        const move = aiSpeed * (delta * 60);
         if (Math.random() < aiMissChance) {
-          computerPaddle.y -= direction * aiSpeed * 0.7;
+          computerPaddle.y -= direction * move * 0.7;
         } else {
-          computerPaddle.y += direction * aiSpeed;
+          computerPaddle.y += direction * move;
         }
       }
       computerPaddle.y = Math.min(Math.max(computerPaddle.y, 0), canvas.height - computerPaddle.height);
 
       particles = particles.filter(p => {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vy += 0.2;
-        p.life--;
+        p.x += p.vx * speedScale;
+        p.y += p.vy * speedScale;
+        p.vy += 0.2 * speedScale;
+        p.life -= speedScale;
         return p.life > 0;
       })
     }
@@ -594,16 +598,26 @@
       document.body.removeChild(link);
     }
 
-    function gameLoop() {
-      update();
+    function gameLoop(timestamp) {
+      if (!isRunning) return;
+
+      if (lastTime === null) {
+        lastTime = timestamp;
+      }
+      const delta = (timestamp - lastTime) / 1000;
+      lastTime = timestamp;
+
+      update(delta);
       draw();
       animationId = requestAnimationFrame(gameLoop);
     }
+
 
     function startGame() {
       if (isDifficultyOpen()) return;
       if (!isRunning && !gameOver) {
         isRunning = true;
+        lastTime = null;
         animationId = requestAnimationFrame(gameLoop);
         startBtn.disabled = true;
         pauseBtn.disabled = false;
