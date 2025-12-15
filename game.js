@@ -16,6 +16,9 @@
 
     const backBtn = root.querySelector("#backBtn");
 
+    const countdownModal = root.querySelector("#countdownModal");
+    const countdownText = root.querySelector("#countdownText");
+
     function lockBackButton() {
       if (!backBtn) return;
       backBtn.disabled = true;
@@ -33,13 +36,17 @@
     const paddleWidth = 12;
 
     const hitSound = new Audio('./audio/hit.wav');
-    hitSound.volume = 0.35;
+    hitSound.volume = 0.4;
     const missSound = new Audio('./audio/miss.wav');
-    missSound.volume = 0.35;
+    missSound.volume = 0.4;
     const winSound = new Audio('./audio/win.wav');
-    winSound.volume = 0.45;
+    winSound.volume = 0.5;
     const loseSound = new Audio('./audio/lose.wav');
-    loseSound.volume = 0.45;
+    loseSound.volume = 0.5;
+
+    const countdownBeep = new Audio('./audio/countdown-beep.mp3');
+    countdownBeep.volume = 0.5;
+
     const muteBtn = root.querySelector("#muteBtn");
     let isMuted = false;
 
@@ -74,6 +81,8 @@
 
     let isServing = false;
     let serveTimerId = null;
+
+    let countdownFrameId = null;
 
     function isDifficultyOpen() {
       return !difficultyModal.classList.contains('hidden');
@@ -200,6 +209,7 @@
       missSound.muted = isMuted;
       winSound.muted = isMuted;
       loseSound.muted = isMuted;
+      countdownBeep.muted = isMuted;
       muteBtn.textContent = isMuted ? "🔇" : "🔊";
     }
 
@@ -365,7 +375,8 @@
         loseSound.play();
         showModal(false);
       } else {
-        startServe(playerScored);
+        isServing = false;
+        resetBall(playerScored);
       }
     }
 
@@ -388,7 +399,8 @@
       computerPaddle.x = canvas.width - paddleWidth;
       computerPaddle.y = (canvas.height - paddleHeight) / 2;
 
-      startServe(true);
+      isServing = false;
+      resetBall(true);
 
       startBtn.disabled = false;
       pauseBtn.disabled = true;
@@ -439,21 +451,58 @@
       isServing = true;
       resetBall(playerServe);
 
-      let pulseScale = 1;
-      let pulseDirection = 1;
+      countdownModal.classList.remove('hidden');
+      countdownText.textContent = '3';
 
-      const pulseInterval = setInterval(() => {
-        pulseScale += 0.02 * pulseDirection;
-        if (pulseScale > 1.15) pulseDirection = -1;
-        if (pulseScale < 1.0) pulseDirection = 1;
-        ball.pulseScale = pulseScale;
-      }, 16);
+      if (countdownFrameId) {
+        cancelAnimationFrame(countdownFrameId);
+        countdownFrameId = null;
+      }
 
-      serveTimerId = setTimeout(() => {
-        isServing = false;
-        ball.pulseScale = 1;
-        clearInterval(pulseInterval);
-      }, 450);
+      const T3 = 0;
+      const T2 = 1000;
+      const T1 = 2000;
+      const T0 = 3000;
+      const TGO = 3800;
+      const THIDE = 4300;
+
+      const startTime = performance.now();
+      let goShown = false;
+
+      countdownBeep.currentTime = 0;
+      countdownBeep.pause();
+      if (!isMuted) {
+        countdownBeep.play().catch(() => { });
+      }
+
+      function updateCountdown() {
+        const elapsed = performance.now() - startTime;
+
+        if (!goShown && elapsed >= TGO) {
+          countdownText.textContent = 'GO!';
+          goShown = true;
+
+          setTimeout(() => {
+            countdownModal.classList.add('hidden');
+            isServing = false;
+          }, THIDE - TGO);
+
+          countdownFrameId = null;
+          return;
+        } else if (elapsed >= T0) {
+          countdownText.textContent = '0';
+        } else if (elapsed >= T1) {
+          countdownText.textContent = '1';
+        } else if (elapsed >= T2) {
+          countdownText.textContent = '2';
+        } else {
+          countdownText.textContent = '3';
+        }
+
+        countdownFrameId = requestAnimationFrame(updateCountdown);
+      }
+
+      countdownFrameId = requestAnimationFrame(updateCountdown);
     }
 
     function drawNet() {
@@ -640,11 +689,20 @@
 
     function startGame() {
       if (isDifficultyOpen()) return;
+
+      const isFreshStart = !isRunning && !gameOver && playerScore === 0 && computerScore === 0;
+
       if (!isRunning && !gameOver) {
         isRunning = true;
         lastTime = null;
         lockBackButton();
         if (backBtn) backBtn.classList.add('hidden');
+
+        if (isFreshStart) {
+          startServe(true);
+        } else {
+          isServing = false;
+        }
 
         animationId = requestAnimationFrame(gameLoop);
 
