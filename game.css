@@ -150,7 +150,7 @@ a,
     background: #111;
     color: #39ff00;
     font-weight: bold;
-    font-size: 1.12rem;
+    font-size: 1.5rem;
     border: 2.5px solid #39ff14;
     border-radius: 12px;
     text-shadow: 0 0 8px #39ff14;
@@ -210,6 +210,10 @@ a,
     border-radius: 18px;
 }
 
+#modalTitle {
+    font-size: 3rem;
+}
+
 .modal.hidden {
     display: none;
 }
@@ -239,6 +243,41 @@ a,
     transform: scale(0.72);
     box-shadow: 0 0 34px rgba(57, 255, 20, 1), 0 0 78px rgba(57, 255, 20, 0.6);
     border-color: #7dff7d;
+}
+
+#playfieldWrapper {
+    position: relative;
+    width: 100%;
+    max-width: 860px;
+    margin: 0 auto;
+}
+
+#pausedOverlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 5;
+}
+
+#pausedOverlay.hidden {
+    display: none;
+}
+
+.paused-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.600);
+    backdrop-filter: blur(2px);
+}
+
+.paused-text {
+    position: relative;
+    font-size: 3rem;
+    letter-spacing: 0.25rem;
+    text-transform: uppercase;
 }
 
 .score-grid {
@@ -301,12 +340,12 @@ a,
     display: inline-block;
     margin-top: 10px;
     padding: 4px 10px;
-    border-radius: 999px;
+    border-radius: 5px;
     font-size: 0.75rem;
     letter-spacing: 0.12rem;
     background: #39ff14;
     color: #000;
-    box-shadow: 0 0 18px #39ff14;
+    box-shadow: 0 0 10px #39ff14;
 }
 
 .badge.hidden {

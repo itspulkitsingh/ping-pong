@@ -18,6 +18,7 @@
 
     const countdownModal = root.querySelector("#countdownModal");
     const countdownText = root.querySelector("#countdownText");
+    const pausedOverlay = root.querySelector("#pausedOverlay");
 
     function lockBackButton() {
       if (!backBtn) return;
@@ -81,7 +82,7 @@
 
     let isServing = false;
     let serveTimerId = null;
-
+    let hasStartedOnce = false;
     let countdownFrameId = null;
 
     function isDifficultyOpen() {
@@ -165,6 +166,15 @@
         const touchY = Math.min(Math.max(e.touches[0].clientY - rect.top, 0), canvas.height);
         playerPaddle.y = Math.min(Math.max(touchY - paddleHeight / 2, 0), canvas.height - paddleHeight);
       }, { passive: false });
+
+      canvas.addEventListener("click", () => {
+        if (isDifficultyOpen()) return;
+        if (isRunning) {
+          pauseGame();
+        } else if (!gameOver) {
+          startGame();
+        }
+      });
     }
 
     function setupKeyboardControls() {
@@ -187,6 +197,18 @@
           }
           return;
         }
+
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          if (diffOpen) return;
+          if (isRunning) {
+            pauseGame();
+          } else if (!gameOver) {
+            startGame();
+          }
+          return;
+        }
+
         if (e.key === 'r' || e.key === 'R') {
           e.preventDefault();
           if (!diffOpen) resetGame();
@@ -330,24 +352,24 @@
       hardSelect.classList.remove('active');
 
       if (level === 'easy') {
-        aiMissChance = 0.3;
-        aiSpeed = 6;
+        aiMissChance = 0.4;
+        aiSpeed = 5.2;
         baseBallSpeed = 5;
-        maxBallSpeed = 9.5;
+        maxBallSpeed = 9;
         currentDifficulty = 'Easy';
         easySelect.classList.add('active');
       } else if (level === 'hard') {
-        aiMissChance = 0.10;
-        aiSpeed = 9;
-        baseBallSpeed = 6;
-        maxBallSpeed = 12.5;
+        aiMissChance = 0.05;
+        aiSpeed = 9.8;
+        baseBallSpeed = 6.5;
+        maxBallSpeed = 14;
         currentDifficulty = 'Hard'
         hardSelect.classList.add('active');
       } else {
-        aiMissChance = 0.20;
-        aiSpeed = 7.5;
-        baseBallSpeed = 5.5;
-        maxBallSpeed = 11;
+        aiMissChance = 0.22;
+        aiSpeed = 7.1;
+        baseBallSpeed = 5.4;
+        maxBallSpeed = 10.8;
         currentDifficulty = 'Normal';
         normalSelect.classList.add('active');
       }
@@ -388,6 +410,8 @@
       isRunning = false;
       gameOver = false;
 
+      hasStartedOnce = false;
+
       playerScore = 0;
       computerScore = 0;
       playerScoreElem.textContent = playerScore;
@@ -420,6 +444,8 @@
       totalRallies = 0;
 
       root.querySelector('#newBestBadge').classList.add('hidden');
+
+      if (pausedOverlay) pausedOverlay.classList.add('hidden');
 
       showDifficultyModal();
 
@@ -690,7 +716,7 @@
     function startGame() {
       if (isDifficultyOpen()) return;
 
-      const isFreshStart = !isRunning && !gameOver && playerScore === 0 && computerScore === 0;
+      const isFreshStart = !isRunning && !gameOver && !hasStartedOnce && playerScore === 0 && computerScore === 0;
 
       if (!isRunning && !gameOver) {
         isRunning = true;
@@ -699,10 +725,13 @@
         if (backBtn) backBtn.classList.add('hidden');
 
         if (isFreshStart) {
+          hasStartedOnce = true;
           startServe(true);
         } else {
           isServing = false;
         }
+
+        if (pausedOverlay) pausedOverlay.classList.add('hidden');
 
         animationId = requestAnimationFrame(gameLoop);
 
@@ -737,6 +766,8 @@
           backBtn.textContent = 'BACK';
           backBtn.classList.remove('hidden');
         }
+
+        if (pausedOverlay) pausedOverlay.classList.remove('hidden');
       }
     }
 
