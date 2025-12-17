@@ -23,6 +23,12 @@
     const svg = document.getElementById('musicWaveBg');
     const audio = document.getElementById('musicAudio');
     const infoIndex = document.getElementById('musicIndex');
+    const SEEK_STEP = 10;
+    const BACK_STEP = 10;
+    const DOUBLE_TAP_MS = 500;
+
+    let lastLoopTap = 0;
+    let lastRestartTap = 0;
 
     function updateInfo() {
         if (infoIndex) infoIndex.textContent = (currentSongIndex + 1).toString();
@@ -90,15 +96,69 @@
         saveState();
     }
 
-    function playRandomNext() {
-        const prev = currentSongIndex;
-        if (songs.length > 1) {
-            while (currentSongIndex === prev) {
-                currentSongIndex = Math.floor(Math.random() * songs.length);
-            }
-        }
+    function playNextTrack() {
+        currentSongIndex = (currentSongIndex + 1) % songs.length;
         saveState();
         playSong();
+    }
+
+    function playPreviousTrack() {
+        currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+        saveState();
+        playSong();
+    }
+
+    function handleLoopTap() {
+        const now = performance.now();
+        const isDouble = now - lastLoopTap < DOUBLE_TAP_MS;
+        lastLoopTap = now;
+
+        const dur = audio.duration || 0;
+        const t = audio.currentTime || 0;
+
+        if (!dur || Number.isNaN(dur)) {
+            playNextTrack();
+            return;
+        }
+
+        if (dur - t <= 1) {
+            playNextTrack();
+            return;
+        }
+
+        if (isDouble) {
+            audio.currentTime = Math.max(dur - 0.1, 0);
+            return;
+        }
+
+        const target = Math.min(t + SEEK_STEP, Math.max(dur - 0.5, 0));
+        audio.currentTime = target;
+    }
+
+    function handleRestartTap() {
+        const now = performance.now();
+        const isDouble = now - lastRestartTap < DOUBLE_TAP_MS;
+        lastRestartTap = now;
+
+        const t = audio.currentTime || 0;
+
+        if (t <= 1) {
+            playPreviousTrack();
+            return;
+        }
+
+        if (isDouble) {
+            audio.currentTime = 0;
+            if (isPlaying) {
+                audio.play();
+            }
+            saveState();
+            return;
+        }
+
+        const target = Math.max(t - BACK_STEP, 0);
+        audio.currentTime = target;
+        saveState();
     }
 
     function pauseSong() {
@@ -127,18 +187,14 @@
         if (!isPlaying) playSong(); else pauseSong();
     });
 
-    restartBtn.addEventListener('click', () => {
-        audio.currentTime = 0;
-        if (isPlaying) playSong(); else setIcon('play');
-        saveState();
-    });
+    restartBtn.addEventListener('click', handleRestartTap);
 
     loopBtn.addEventListener('click', () => {
-        playRandomNext();
+        handleLoopTap();
     });
 
     audio.addEventListener('ended', () => {
-        playRandomNext();
+        playNextTrack();
     });
 
     setIcon(isPlaying ? 'pause' : 'play');
@@ -260,7 +316,7 @@
         const dy = (e.clientY - cy) / cy;
         const maxTilt = 3;
 
-        playerBar.style.transform = `rotateX(${ -dy * maxTilt }deg) rotateY(${ dx * maxTilt }deg)`;
+        playerBar.style.transform = `rotateX(${-dy * maxTilt}deg) rotateY(${dx * maxTilt}deg)`;
     });
 
     document.addEventListener('mouseleave', () => {
