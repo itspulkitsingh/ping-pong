@@ -293,8 +293,10 @@
         if (!isDragging) return;
         let x = e.clientX - dragOffsetX;
         let y = e.clientY - dragOffsetY;
-        x = Math.max(0, Math.min(window.innerWidth - playerBar.offsetWidth, x));
-        y = Math.max(0, Math.min(window.innerHeight - playerBar.offsetHeight, y));
+
+        const margin = 8;
+        x = Math.max(margin, Math.min(window.innerWidth - playerBar.offsetWidth, x));
+        y = Math.max(margin, Math.min(window.innerHeight - playerBar.offsetHeight, y));
         playerBar.style.left = x + 'px';
         playerBar.style.top = y + 'px';
         playerBar.style.right = 'auto';

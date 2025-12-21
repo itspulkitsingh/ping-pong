@@ -51,6 +51,18 @@
     const muteBtn = root.querySelector("#muteBtn");
     let isMuted = false;
 
+    function musicFadeDown() {
+      if (window.NeonMusic && !isMuted) {
+        window.NeonMusic.fadeDown();
+      }
+    }
+
+    function musicFadeUp() {
+      if (window.NeonMusic && !isMuted) {
+        window.NeonMusic.fadeUp();
+      }
+    }
+
     let animationId = null;
     let isRunning = false;
     let gameOver = false;
@@ -721,6 +733,7 @@
       if (!isRunning && !gameOver) {
         isRunning = true;
         lastTime = null;
+        musicFadeUp();
         lockBackButton();
         if (backBtn) backBtn.classList.add('hidden');
 
@@ -750,6 +763,8 @@
       if (isRunning) {
         isRunning = false;
         cancelAnimationFrame(animationId);
+
+        musicFadeDown();
 
         startBtn.textContent = 'Resume';
         startBtn.disabled = false;
@@ -865,6 +880,22 @@
       })
 
       root.querySelector('#downloadCardBtn').addEventListener('click', downloadShareCard);
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          if (isRunning) {
+            pauseGame();
+          } else if (!isRunning && !gameOver) {
+            if (window.NeonMusic && !isMuted) {
+              window.NeonMusic.fadeDown();
+            }
+          }
+        } else {
+          if (window.NeonMusic && !isMuted && !isRunning && !gameOver) {
+            window.NeonMusic.fadeUp();
+          }
+        }
+      });
 
       unlockBackButton();
     }

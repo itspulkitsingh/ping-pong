@@ -6,13 +6,22 @@ body {
     background: radial-gradient(circle at top, #041a04 0%, #000 55%);
     min-height: 100vh;
     margin: 0;
-    display: flex;
+    display: block;
     align-items: center;
     justify-content: center;
     font-family: 'Share Tech Mono', 'Consolas', monospace;
     height: 100vh;
     cursor: url("./cursor/cursor.png") 0 0, auto;
-    overflow: hidden;
+    overflow-x: hidden;
+}
+
+#welcomeScreen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 16px;
+    box-sizing: border-box;
 }
 
 body::before {
@@ -48,7 +57,7 @@ body::before {
     }
 }
 
-#screenRoot > div {
+#screenRoot>div {
     will-change: transform, opacity;
 }
 
@@ -65,6 +74,7 @@ body::before {
         opacity: 0;
         transform: translateY(-30px) scale(0.98);
     }
+
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -76,6 +86,7 @@ body::before {
         opacity: 1;
         transform: translate(0) scale(1);
     }
+
     to {
         opacity: 0;
         transform: translateY(25px) scale(0.98);
@@ -181,4 +192,27 @@ a,
 
 .neon-btn:hover:after {
     opacity: 1;
+}
+
+html {
+    scrollbar-width: thin;
+    scrollbar-color: #39ff14 #020802;
+}
+
+html::-webkit-scrollbar {
+    width: 10px;
+}
+
+html::-webkit-scrollbar-track {
+    background: #020802;
+}
+
+html::-webkit-scrollbar-thumb {
+    background: #39ff14;
+    border-radius: 18px;
+    box-shadow: 0 0 12px #39ff14;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+    background: #6dff6d;
 }

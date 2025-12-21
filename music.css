@@ -95,3 +95,51 @@
     opacity: 0.8;
     text-transform: uppercase;
 }
+
+@media (max-width: 768px) {
+    #musicDock {
+        right: 12px;
+        bottom: 20px;
+        width: 280px;
+        height: 72px;
+        border-radius: 16px;
+    }
+
+    #musicControls {
+        gap: 20px;
+    }
+
+    #musicPlay {
+        width: 52px;
+        height: 52px;
+    }
+
+    .music-btn {
+        width: 40px;
+        height: 40px;
+    }
+
+    .music-icon {
+        width: 26px;
+        height: 26px;
+    }
+
+    .music-info {
+        left: 16px;
+        top: 8px;
+        font-size: 0.68rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #musicDock {
+        right: 8px;
+        bottom: 14px;
+        width: 250px;
+        height: 70px;
+    }
+
+    #musicControls {
+        gap: 16px;
+    }
+}
