@@ -88,6 +88,35 @@ a,
     flex-wrap: wrap;
 }
 
+.rounds-row {
+    margin: 22px auto 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+}
+
+.rounds-label {
+    font-size: 2rem;
+    letter-spacing: 0.08rem;
+}
+
+.rounds-select {
+    background: rgb(0, 0, 0);
+    border: 2px solid #39ff14;
+    border-radius: 18px;
+    padding: 6px 14px;
+    color: #39ff14;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 2rem;
+    outline: none;
+    box-shadow: 0 0 26px rgba(57, 255, 20, 0.6);
+}
+
+.rounds-select:focus {
+    box-shadow: 0 0 26px rgba(57, 255, 20, 0.9);
+}
+
 #rallyDisplay {
     font-size: 1.1rem;
     letter-spacing: 0.12rem;
@@ -432,7 +461,7 @@ a,
         padding-bottom: 32px;
         min-height: auto;
     }
-    
+
     .neon-btn {
         padding: 13px 26px;
         font-size: 0.95rem;

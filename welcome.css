@@ -15,6 +15,12 @@ body {
     overflow-x: hidden;
 }
 
+button,
+a,
+.neon-btn {
+    cursor: url("./cursor/select-cursor.png") 6 2, pointer;
+}
+
 #welcomeScreen {
     min-height: 100vh;
     display: flex;
@@ -199,6 +205,7 @@ a,
         opacity: 0;
         transform: translateY(-24px) scale(0.96);
     }
+
     100% {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -210,6 +217,7 @@ a,
         opacity: 1;
         transform: translateY(0) scale(1);
     }
+
     100% {
         opacity: 0;
         transform: translateY(24px) scale(0.96);
@@ -278,6 +286,7 @@ a,
     margin-bottom: 30px;
     background: linear-gradient(45deg, #39ff14, #00ff88);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     text-shadow: 0 0 30px rgba(57, 255, 20, 0.5);
 }

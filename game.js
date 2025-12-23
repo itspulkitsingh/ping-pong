@@ -4,6 +4,8 @@
     const easySelect = root.querySelector("#easySelect");
     const normalSelect = root.querySelector("#normalSelect");
     const hardSelect = root.querySelector("#hardSelect");
+    const roundsSelect = root.querySelector('#roundSelect');
+    const difficultyStartBtn = root.querySelector('#difficultyStartBtn');
 
     const canvas = root.querySelector("#gameCanvas");
     const ctx = canvas.getContext("2d");
@@ -34,7 +36,7 @@
       backBtn.classList.remove('disabled');
     }
 
-    const WINNING_SCORE = 5;
+    let winningScore = 5;
     const paddleHeight = 90;
     const paddleWidth = 12;
 
@@ -403,11 +405,11 @@
 
       shakeScreen(18);
 
-      if (playerScore >= WINNING_SCORE) {
+      if (playerScore >= winningScore) {
         winSound.currentTime = 0;
         winSound.play();
         showModal(true);
-      } else if (computerScore >= WINNING_SCORE) {
+      } else if (computerScore >= winningScore) {
         loseSound.currentTime = 0;
         loseSound.play();
         showModal(false);
@@ -461,6 +463,9 @@
       root.querySelector('#newBestBadge').classList.add('hidden');
 
       if (pausedOverlay) pausedOverlay.classList.add('hidden');
+
+      winningScore = 5;
+      if (roundsSelect) roundsSelect.value = '5';
 
       showDifficultyModal();
 
@@ -657,51 +662,123 @@
       const h = cardCanvas.height;
 
       cctx.clearRect(0, 0, w, h);
-      const gradient = cctx.createRadialGradient(w / 2, h / 2, 60, w / 2, h / 2, w / 1.2);
+
+      const gradient = cctx.createRadialGradient(
+        w / 2, h / 2, 40,
+        w / 2, h / 2, w / 1.4
+      );
       gradient.addColorStop(0, '#000000');
-      gradient.addColorStop(1, '#020f02');
+      gradient.addColorStop(1, '#020802');
       cctx.fillStyle = gradient;
       cctx.fillRect(0, 0, w, h);
 
-      cctx.strokeStyle = '#39ff14';
-      cctx.lineWidth = 8;
-      cctx.shadowColor = '#39ff14';
-      cctx.shadowBlur = 30;
-      cctx.strokeRect(40.5, 40.5, w - 81, h - 81);
+      const particleCount = 85;
+      for (let i = 0; i < particleCount; i++) {
+        const px = Math.random() * w;
+        const py = Math.random() * h;
+        const pr = Math.random() * 2.2 + 0.8;
+        const alpha = Math.random() * 0.35 + 0.15;
 
-      cctx.shadowBlur = 0;
-      cctx.textAlign = 'center';
-
-      cctx.font = '42px "Share Tech Mono", monospace';
-      cctx.fillStyle = '#39ff14'
-      cctx.textAlign = 'center';
-      cctx.fillText('Ping Pong', w / 2, 115);
-
-      cctx.font = '42px "Share Tech Mono", monospace';
-      cctx.fillStyle = '#39ff14';
-      cctx.fillText(`My Score: ${playerScore}  |  AI: ${computerScore}`, w / 2, 170);
-
-      cctx.font = '26px "Share Tech Mono", monospace';
-      cctx.fillText(`highest Rally (current game): ${maxRally}`, w / 2, 215);
-      cctx.fillText(`All time highest Rally: ${bestRallyEver}`, w / 2, 255);
-
-      cctx.fillText(`Mode: ${currentDifficulty}`, w / 2, 295);
-
-      if (maxRally === bestRallyEver && maxRally > 0) {
-        cctx.font = '28px "Share Tech Mono", monospace';
-        cctx.fillStyle = '#39ff14';
-        cctx.shadowBlur = 25;
-        cctx.fillText('NEW HIGHEST RALLY!', w / 2, 335);
-        cctx.shadowBlur = 0;
+        cctx.save();
+        cctx.fillStyle = `rgba(57, 255, 20, ${alpha})`;
+        cctx.shadowColor = '#39ff14';
+        cctx.shadowBlur = 10;
+        cctx.beginPath();
+        cctx.arc(px, py, pr, 0, Math.PI * 2);
+        cctx.fill();
+        cctx.restore();
       }
 
+      cctx.save();
+      cctx.strokeStyle = '#39ff14';
+      cctx.lineWidth = 6;
+      cctx.shadowColor = '#39ff14';
+      cctx.shadowBlur = 26;
+      cctx.strokeRect(32.5, 32.5, w - 65, h - 65);
+      cctx.restore();
+
+      cctx.save();
+      cctx.textAlign = 'center';
+      cctx.fillStyle = '#39ff14';
+      cctx.shadowColor = '#39ff14';
+      cctx.shadowBlur = 22;
+      cctx.font = '30px "Share Tech Mono", monospace';
+      const scoreLine = `YOU: ${playerScore}   |   AI: ${computerScore}`;
+      cctx.fillText(scoreLine, w / 2, 145);
+      cctx.restore();
+
+      cctx.save();
+      cctx.strokeStyle = 'rgba(57, 255, 20, 0.9)';
+      cctx.lineWidth = 2;
+      cctx.shadowColor = '#39ff14';
+      cctx.shadowBlur = 14;
+      cctx.beginPath();
+      cctx.moveTo(70, 170);
+      cctx.lineTo(w - 70, 170);
+      cctx.stroke();
+      cctx.restore();
+
+      cctx.save();
+      const cardY = 200;
+      const cardH = 150;
+      const cardX = 70;
+      const cardW = w - cardX * 2;
+
+      function roundRectPath(ctx, x, y, w2, h2, r) {
+        const rr = Math.min(r, w2 / 2, h2 / 2);
+        ctx.beginPath();
+        ctx.moveTo(x + rr, y);
+        ctx.lineTo(x + w2 - rr, y);
+        ctx.quadraticCurveTo(x + w2, y, x + w2, y + rr);
+        ctx.lineTo(x + w2, y + h2 - rr);
+        ctx.quadraticCurveTo(x + w2, y + h2, x + w2 - rr, y + h2);
+        ctx.lineTo(x + rr, y + h2);
+        ctx.quadraticCurveTo(x, y + h2, x, y + h2 - rr);
+        ctx.lineTo(x, y + rr);
+        ctx.quadraticCurveTo(x, y, x + rr, y);
+        ctx.closePath();
+      }
+
+      cctx.fillStyle = 'rgba(0, 0, 0, 0.92)';
+      cctx.strokeStyle = 'rgba(57, 255, 20, 0.85)';
+      cctx.lineWidth = 2;
+      cctx.shadowColor = '#39ff14';
+      cctx.shadowBlur = 18;
+
+      roundRectPath(cctx, cardX + 0.5, cardY + 0.5, cardW - 1, cardH - 1, 18);
+      cctx.fill();
+      cctx.stroke();
+      cctx.shadowBlur = 0;
+
+      cctx.fillStyle = '#39ff14';
+      cctx.textAlign = 'center';
+
+      const isVictory = playerScore > computerScore;
+      cctx.font = '26px "Share Tech Mono", monospace';
+      cctx.fillStyle = isVictory ? '#39ff14' : '#ff4444';
+      cctx.shadowColor = cctx.fillStyle;
+      cctx.shadowBlur = 18;
+      cctx.fillText(isVictory ? 'VICTORY' : 'DEFEAT', w / 2, cardY + 32);
+      cctx.shadowBlur = 0;
+
+      cctx.fillStyle = '#39ff14';
+      cctx.font = '20px "Share Tech Mono", monospace';
+      cctx.fillText(`TOTAL RALLIES: ${totalRallies}`, w / 2, cardY + 60);
+      cctx.fillText(`LONGEST RALLY PLAYED: ${maxRally}`, w / 2, cardY + 85);
+      cctx.fillText(`MODE: ${currentDifficulty.toUpperCase()}`, w / 2, cardY + 110);
+      cctx.fillText(`TOTAL ROUNDS: ${winningScore}`, w / 2, cardY + 135);
+
+      cctx.restore();
+
+      cctx.save();
       cctx.font = '18px "Share Tech Mono", monospace';
       cctx.fillStyle = '#39ff14';
       cctx.textAlign = 'left';
-      cctx.fillText('Made with ❤️ by Pulkit Singh', 60, h - 55);
+      cctx.fillText('Made with ♥ by Pulkit Singh', 40, h - 40);
 
       cctx.textAlign = 'right';
-      cctx.fillText('github.com/itspulkitsingh', w - 60, h - 25);
+      cctx.fillText('github.com/itspulkitsingh', w - 40, h - 18);
+      cctx.restore();
     }
 
     function downloadShareCard() {
@@ -859,18 +936,37 @@
 
       easySelect.addEventListener("click", () => {
         setDifficulty('easy');
-        hideDifficultyModal();
       });
       normalSelect.addEventListener("click", () => {
         setDifficulty('normal');
-        hideDifficultyModal();
       });
       hardSelect.addEventListener("click", () => {
         setDifficulty('hard');
-        hideDifficultyModal();
       })
 
       setDifficulty('normal');
+
+      if (roundsSelect) {
+        winningScore = Number(roundsSelect.value) || 5;
+
+        roundsSelect.addEventListener('change', () => {
+          const val = Number(roundsSelect.value);
+          if (Number.isFinite(val) && val >= 3 && val <= 15) {
+            winningScore = val;
+          } else {
+            winningScore = 5;
+            roundsSelect.value = '5';
+          }
+        });
+      }
+
+      if (difficultyStartBtn) {
+        difficultyStartBtn.addEventListener('click', () => {
+          hideDifficultyModal();
+          startGame();
+        });
+      }
+
       startBtn.disabled = false;
       pauseBtn.disabled = true;
       pauseBtn.classList.add('hidden');
