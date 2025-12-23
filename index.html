@@ -16,6 +16,18 @@
   <canvas id="bgCanvas"></canvas>
   <div id="pageLoader"></div>
 
+  <div id="guideDock" class="guide-dock">
+    <button id="guideBtn" class="neon-btn guide-toggle">HELP?</button>
+  </div>
+
+  <div id="guideModal" class="guide-modal hidden">
+    <div class="guide-content">
+      <h2>GUIDE</h2>
+      <div id="guideContent"></div>
+      <div class="guide-close"></div>
+    </div>
+  </div>
+
   <div id="musicDock">
     <svg id="musicWaveBg" viewBox="0 0 340 80" preserveAspectRatio="none"></svg>
     <div id="musicControls">
@@ -41,9 +53,9 @@
   </div>
   <audio id="musicAudio" preload="auto"></audio>
 
-  <div id="screenRoot" class="tilt">
+  <div id="screenRoot">
     <div id="welcomeScreen" class="screen-slide-in">
-      <div class="container">
+      <div class="container tilt">
         <h1 class="neon-text" id="mainTitle">Welcome to the Cool Ping Pong!</h1>
         <p class="neon-text" id="introText">
           Experience a classic Ping Pong game in retro neon style with mind calming music!
@@ -66,10 +78,10 @@
   <script src="./app.js"></script>
   <script src="./vanillajs/vanilla-tilt.min.js"></script>
   <script src="./pageloader-script/pageloader.js"></script>
+  <script src="./guide/guide.js"></script>
 
 
   <script>
-
     document.addEventListener('DOMContentLoaded', () => {
       if (window.PageLoader && window.PageLoader.show && window.PageLoader.hide) {
         window.PageLoader.show();
@@ -82,31 +94,32 @@
         loader.classList.add('active');
         setTimeout(() => loader.classList.remove('active'), 2000);
       }
-    });
 
+      initWelcomeEffects();
+    });
 
     function wrapLetters(id) {
       const el = document.getElementById(id);
-      el.innerHTML = el.textContent.split('').map(ch =>
-        ch === ' ' ? ' ' : `<span class="neon-letter">${ch}</span>`
-      ).join('');
+      if (!el) return;
+      el.innerHTML = el.textContent
+        .split('')
+        .map(ch => (ch === ' ' ? ' ' : `<span class="neon-letter">${ch}</span>`))
+        .join('');
     }
-    wrapLetters('mainTitle');
-    wrapLetters('introText');
-    wrapLetters('descText');
 
-    VanillaTilt.init(document.querySelectorAll(".container"), { max: 10, speed: 400, });
-    VanillaTilt.init(document.querySelectorAll(".neon-btn"));
+    function initWelcomeEffects() {
+      wrapLetters('mainTitle');
+      wrapLetters('introText');
+      wrapLetters('descText');
 
-    window.addEventListener('click', function onFirstClick() {
-      if (window.NeonMusic) {
-        const audio = document.getElementById('musicAudio');
-        if (audio && audio.paused && !audio.currentTime) {
-        }
+      if (window.VanillaTilt) {
+        VanillaTilt.init(document.querySelectorAll('.tilt'), {
+          max: 10,
+          speed: 400,
+        });
+        VanillaTilt.init(document.querySelectorAll('.neon-btn'));
       }
-      window.removeEventListener('click', onFirstClick);
-    });
-
+    }
   </script>
 </body>
 

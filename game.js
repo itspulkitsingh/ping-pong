@@ -20,6 +20,8 @@
     const countdownText = root.querySelector("#countdownText");
     const pausedOverlay = root.querySelector("#pausedOverlay");
 
+    const guideDock = document.getElementById('guideDock');
+
     function lockBackButton() {
       if (!backBtn) return;
       backBtn.disabled = true;
@@ -156,6 +158,7 @@
 
       modal.classList.remove('hidden');
       gameOver = true;
+      if (guideDock) guideDock.classList.remove('hidden');
       unlockBackButton();
     }
 
@@ -474,6 +477,8 @@
         backBtn.textContent = 'Back';
         backBtn.classList.remove('hidden');
       }
+
+      if (guideDock) guideDock.classList.remove('hidden');
     }
 
     function resetBall(playerServe) {
@@ -756,6 +761,8 @@
 
         resetBtn.disabled = true;
         resetBtn.classList.add('hidden');
+
+        if (guideDock) guideDock.classList.add('hidden');
       }
     }
 
@@ -783,6 +790,7 @@
         }
 
         if (pausedOverlay) pausedOverlay.classList.remove('hidden');
+        if (guideDock) guideDock.classList.remove('hidden');
       }
     }
 

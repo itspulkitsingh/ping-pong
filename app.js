@@ -26,13 +26,11 @@
       });
     }
 
-    // animate game screen in
     gameScreen.classList.add('screen-slide-in');
 
     const backBtn = screenRoot.querySelector('#backBtn');
     if (backBtn) {
       backBtn.addEventListener('click', () => {
-        // animate game screen out
         gameScreen.classList.remove('screen-slide-in');
         gameScreen.classList.add('screen-slide-out');
 
@@ -40,6 +38,11 @@
           'animationend',
           () => {
             screenRoot.innerHTML = originalWelcomeHTML;
+
+            if (typeof initWelcomeEffects === 'function') {
+              initWelcomeEffects();
+            }
+
             wireWelcome();
             const welcome = screenRoot.querySelector('#welcomeScreen');
             if (welcome) {

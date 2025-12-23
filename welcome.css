@@ -194,9 +194,113 @@ a,
     opacity: 1;
 }
 
+@keyframes guidePopIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-24px) scale(0.96);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes guidePopOut {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(24px) scale(0.96);
+    }
+}
+
+#guideDock {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 9999;
+    pointer-events: auto;
+}
+
+#guideBtn {
+    width: 80px;
+    height: 60px;
+    border-radius: 18px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 20px #39ff14, inset 0 0 10px rgba(57, 255, 20, 0.3);
+}
+
+#guideBtn:hover {
+    transform: scale(1.1);
+}
+
+.guide-modal {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at top, rgba(0, 8, 0, 0.5) 0%, rgba(0, 0, 0, 0.52) 60%);
+    backdrop-filter: blur(10px);
+    z-index: 9998;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.guide-content {
+    width: min(980px, 100%);
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 32px 40px 28px;
+    border-radius: 26px;
+    background: radial-gradient(circle at top, rgba(8, 40, 8, 0.96) 0%, #000 70%);
+    border: 2px solid #39ff14;
+    box-shadow: 0 0 40px rgba(55, 255, 20, 0.4), 0 0 90px rgba(55, 255, 20, 0.2), inset 0 0 22px rgba(55, 255, 20, 0.1);
+    text-align: center;
+    transform-origin: center top;
+}
+
+.guide-content.anim-in {
+    animation: guidePopIn 0.32s ease-out forwards;
+}
+
+.guide-content.anim-out {
+    animation: guidePopOut 0.26s ease-in forwards;
+}
+
+.guide-content h2 {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    background: linear-gradient(45deg, #39ff14, #00ff88);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(57, 255, 20, 0.5);
+}
+
+.guide-content h3 {
+    color: #39ff14;
+    margin: 25px 0 15px;
+    font-size: 1.5ren;
+}
+
+.guide-section {
+    text-align: left;
+    margin: 20px 0;
+    padding: 20px;
+    background: rgba(57, 255, 20, 0.1);
+    border-left: 4px solid #39ff14;
+    border-radius: 8px;
+    color: #39ff14;
+}
+
 html {
     scrollbar-width: thin;
-    scrollbar-color: #39ff14 #020802;
+    scrollbar-color: #39ff14 #02080200;
 }
 
 html::-webkit-scrollbar {
@@ -215,4 +319,17 @@ html::-webkit-scrollbar-thumb {
 
 html::-webkit-scrollbar-thumb:hover {
     background: #6dff6d;
+}
+
+@media (max-width: 600px) {
+    .guide-content {
+        padding: 22px 18px 18px;
+        border-radius: 18px;
+    }
+
+    #guideBtn {
+        width: 50px;
+        height: 50px;
+        font-size: 1.6rem;
+    }
 }
