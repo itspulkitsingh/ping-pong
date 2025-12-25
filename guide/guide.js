@@ -47,6 +47,10 @@
         <strong>RALLY HYPE & CHEERUP!</strong><br>
         Once rallies get long, the ball sometimes pulses while neon words like “INTENSE!” or “SWEET!” flash on screen, often spoken out loud in an arcade-style voice for extra hype.
         </div>
+        <div class="guide-section">
+        <strong>LIVE TIPS:</strong><br>
+        The "Did You Know?" line at the bottom cycles through controls, strategy tips, and fun trivia about Pong and real ping pong records while you play
+        </div>
         `,
         musicSystem: `
         <h3> 🎵 CREATIVE MUSIC PLAYER 🎵 </h3>
