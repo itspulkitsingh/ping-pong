@@ -43,6 +43,10 @@
         <strong>CUSTOM SCROLLBAR</strong><br>
         Custom scrollbar if the content doesn't fits properly in ur screen (optional: zoom out if u want a better experience on laptop/desktop)
         </div>
+        <div class="guide-section">
+        <strong>RALLY HYPE & CHEERUP!</strong><br>
+        Once rallies get long, the ball sometimes pulses while neon words like “INTENSE!” or “SWEET!” flash on screen, often spoken out loud in an arcade-style voice for extra hype.
+        </div>
         `,
         musicSystem: `
         <h3> 🎵 CREATIVE MUSIC PLAYER 🎵 </h3>
