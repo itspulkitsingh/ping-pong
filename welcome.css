@@ -228,7 +228,7 @@ a,
     position: fixed;
     top: 20px;
     left: 20px;
-    z-index: 9999;
+    z-index: 4000;
     pointer-events: auto;
 }
 
@@ -253,11 +253,19 @@ a,
     inset: 0;
     background: radial-gradient(circle at top, rgba(0, 8, 0, 0.5) 0%, rgba(0, 0, 0, 0.52) 60%);
     backdrop-filter: blur(10px);
-    z-index: 9998;
+    z-index: 3000;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 20px;
+}
+
+.guide-modal.hidden {
+    display: none !important;
+}
+
+.guide-modal:not(.hidden) {
+    display: flex !important;
 }
 
 .guide-content {
@@ -294,17 +302,18 @@ a,
 .guide-content h3 {
     color: #39ff14;
     margin: 25px 0 15px;
-    font-size: 1.5ren;
+    font-size: 1.5rem;
 }
 
 .guide-section {
     text-align: left;
-    margin: 20px 0;
+    margin: 20px auto;
     padding: 20px;
     background: rgba(57, 255, 20, 0.1);
     border-left: 4px solid #39ff14;
     border-radius: 8px;
     color: #39ff14;
+    max-width: 860px;
 }
 
 html {
