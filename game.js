@@ -5,7 +5,12 @@
     const normalSelect = root.querySelector("#normalSelect");
     const hardSelect = root.querySelector("#hardSelect");
     const roundsSelect = root.querySelector('#roundSelect');
+    const rulesRoundsElem = root.querySelector('#rulesRounds');
+    const rulesModeElem = root.querySelector('#rulesMode');
+    const modeLabelElem = root.querySelector('#modeLabel');
     const difficultyStartBtn = root.querySelector('#difficultyStartBtn');
+
+    const proTipTextElem = root.querySelector('#proTipText');
 
     const canvas = root.querySelector("#gameCanvas");
     const ctx = canvas.getContext("2d");
@@ -228,7 +233,9 @@
 
         if (e.key === 'r' || e.key === 'R') {
           e.preventDefault();
-          if (!diffOpen) resetGame();
+          if (!diffOpen && !isRunning && !gameOver) {
+            resetGame();
+          }
           return;
         }
         if (!isRunning || gameOver) return;
@@ -390,6 +397,78 @@
         currentDifficulty = 'Normal';
         normalSelect.classList.add('active');
       }
+      updateRulesLine();
+      updateModeLabel();
+    }
+
+    function updateRulesLine() {
+      if (!rulesRoundsElem || !rulesModeElem) return;
+      rulesRoundsElem.textContent = winningScore;
+      rulesModeElem.textContent = currentDifficulty.toUpperCase();
+    }
+
+    function updateModeLabel() {
+      if (!modeLabelElem) return;
+      modeLabelElem.textContent = `MODE: ${currentDifficulty.toUpperCase()} • FIRST TO REACH ${winningScore} IS THE WINNER`;
+    }
+
+    const proTips = [
+      'Mouse, touch, W/S keys, or "UP & DOWN ARROWS" keys all move your paddle',
+      'Space, Esc, Click (on Game canvas), or the buttons all pause & resume',
+      'Press R to hard reset and re-select difficulty mode and No. of rounds',
+      'Use the "HELP?" button for a breakdown of every feature.',
+      'Mute button silences all the game SFX without touching the Music player, so that you can Have your smooth music experience while playing this game!',
+      'Download your game score card at the end of your game, which you can share with your friends and even set it as a memory',
+      'Longer rallies speed up the ball and make angles more extreme',
+      'Hitting near paddle edges creates sharper bounce angles!'
+    ];
+
+    let proTipIndex = 0;
+    let proTipCharIndex = 0;
+    let proTipDeleting = false;
+    let proTipTimerId = null;
+
+    function startProTipLoop() {
+      if (!proTipTextElem) return;
+      if (proTipTimerId) return;
+
+      function step() {
+        const full = proTips[proTipIndex];
+
+        if (!proTipDeleting) {
+          proTipCharIndex++;
+          proTipTextElem.textContent = full.slice(0, proTipCharIndex);
+
+          if (proTipCharIndex >= full.length) {
+            proTipDeleting = true;
+            proTipTimerId = setTimeout(step, 3000);
+            return;
+          }
+        } else {
+          proTipCharIndex--;
+          proTipTextElem.textContent = full.slice(0, Math.max(proTipCharIndex, 0));
+
+          if (proTipCharIndex <= 0) {
+            proTipDeleting = false;
+            proTipIndex = (proTipIndex + 1) % proTips.length;
+            proTipTimerId = setTimeout(step, 450);
+            return;
+          }
+        }
+
+        const speed = proTipDeleting ? 35 : 45;
+        proTipTimerId = setTimeout(step, speed);
+      }
+
+      if (proTipTimerId) {
+        clearTimeout(proTipTimerId);
+        proTipTimerId = null;
+      }
+
+      proTipCharIndex = 0;
+      proTipDeleting = false;
+      proTipIndex = 0;
+      proTipTimerId = setTimeout(step, 700);
     }
 
     function updateScore(playerScored) {
@@ -467,6 +546,9 @@
       winningScore = 5;
       if (roundsSelect) roundsSelect.value = '5';
 
+      updateRulesLine();
+      updateModeLabel();
+
       showDifficultyModal();
 
       startBtn.textContent = 'Start';
@@ -482,6 +564,8 @@
         backBtn.textContent = 'Back';
         backBtn.classList.remove('hidden');
       }
+
+      startProTipLoop();
 
       if (guideDock) guideDock.classList.remove('hidden');
     }
@@ -769,7 +853,6 @@
       cctx.fillText(`TOTAL ROUNDS: ${winningScore}`, w / 2, cardY + 135);
 
       cctx.restore();
-
       cctx.save();
       cctx.font = '18px "Share Tech Mono", monospace';
       cctx.fillStyle = '#39ff14';
@@ -817,6 +900,9 @@
         lastTime = null;
         musicFadeUp();
         lockBackButton();
+
+        startProTipLoop();
+
         if (backBtn) backBtn.classList.add('hidden');
 
         if (isFreshStart) {
@@ -908,6 +994,8 @@
       setupKeyboardControls();
 
       setDifficulty('normal');
+      updateRulesLine();
+      updateModeLabel();
       easySelect.addEventListener("click", () => setDifficulty('easy'));
       normalSelect.addEventListener("click", () => setDifficulty('normal'));
       hardSelect.addEventListener("click", () => setDifficulty('hard'));
@@ -944,8 +1032,6 @@
         setDifficulty('hard');
       })
 
-      setDifficulty('normal');
-
       if (roundsSelect) {
         winningScore = Number(roundsSelect.value) || 5;
 
@@ -957,6 +1043,8 @@
             winningScore = 5;
             roundsSelect.value = '5';
           }
+          updateRulesLine();
+          updateModeLabel();
         });
       }
 

@@ -35,6 +35,11 @@
                     </select>
                 </div>
 
+                <p id="rulesLine" class="rules-line">
+                    First to <span id="ruleRounds">5</span> points wins! • MODE: <span id="rulesMode">Normal</span>
+                </p>
+                <br>
+
                 <button id="difficultyStartBtn" class="neon-btn large">START MATCH</button>
             </div>
         </div>
@@ -64,13 +69,18 @@
             <canvas id="gameCanvas" width="800" height="450"></canvas>
 
         </div>
+        <br>
+        <div id="modeLabel" class="mode-label">
+            MODE: NORMAL • FIRST TO REACH 5 WINS!
+        </div>
+        <br>
+        <br>
+        <div id="proTipLine" class="pro-tip-line">
+            <strong class="pro-tip-prefix">Did you know?  </strong><br>
+            <span id="proTipText"></span>
+            <span class="pro-tip-cursor">|</span>
+        </div>
 
-        <p id="controlsHint" class="neon-text">
-            Controls: Mouse / Touch or W / S / ↑ / ↓
-        </p>
-        <p id="controlsHint" class="neon-text">
-            · Enter = Start · Space = Pause / Resume · R = Reset ·
-        </p>
         <div id="controls">
             <button id="startBtn" class="neon-btn">Start</button>
             <button id="pauseBtn" class="neon-btn" disabled>Pause</button>

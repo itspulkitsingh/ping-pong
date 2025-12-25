@@ -88,6 +88,22 @@ a,
     flex-wrap: wrap;
 }
 
+#difficultyModal select#roundSelect {
+    transform: none !important;
+    -webkit-transform: none !important;
+    transform-origin: center center;
+    position: relative;
+    z-index: 5;
+    will-change: auto;
+    max-width: 120px;
+    width: auto;
+    box-sizing: border-box;
+}
+
+#difficultyModal {
+    overflow: hidden;
+}
+
 .rounds-row {
     margin: 22px auto 26px;
     display: flex;
@@ -105,12 +121,13 @@ a,
     background: rgb(0, 0, 0);
     border: 2px solid #39ff14;
     border-radius: 18px;
-    padding: 6px 14px;
+    padding: 4px 10px;
     color: #39ff14;
     font-family: 'Share Tech Mono', monospace;
-    font-size: 2rem;
+    font-size: 1.7rem;
     outline: none;
     box-shadow: 0 0 26px rgba(57, 255, 20, 0.6);
+    max-width: 90px;
 }
 
 .rounds-select:focus {
@@ -274,7 +291,7 @@ a,
 }
 
 .modal-content:hover {
-    transform: scale(0.72);
+    transform: scale(0.71);
     box-shadow: 0 0 34px rgba(57, 255, 20, 1), 0 0 78px rgba(57, 255, 20, 0.6);
     border-color: #7dff7d;
 }
@@ -407,6 +424,64 @@ a,
 
 .hidden {
     display: none !important;
+}
+
+.rules-line {
+    margin-top: 0.8rem;
+    font-size: 0.9rem;
+    color: #bfffbf;
+    letter-spacing: 0.06rem;
+}
+
+.mode-label {
+    margin-top: 10px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.18rem;
+    text-transform: uppercase;
+    color: #69ff69;
+}
+
+.pro-tip-line {
+    margin-top: 4px;
+    text-align: center;
+    font-size: 0.8rem;
+    letter-spacing: 0.06rem;
+    color: #ffffff;
+    opacity: 0.9;
+    min-height: 1.6rem;
+    white-space: normal;
+    word-wrap: break-word;
+    max-width: 88%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.pro-tip-prefix {
+    color: #ff4444;
+    font-weight: 700;
+    margin-right: 6px;
+    font-size: 1.5rem;
+}
+
+.pro-tip-cursor {
+    display: inline-block;
+    margin-left: 2px;
+    animation: proTipBlink 0.9s step-end infinite;
+}
+
+@keyframes proTipBlink {
+
+    0%,
+    50% {
+        opacity: 1;
+    }
+
+    50.1%,
+    100% {
+        opacity: 0;
+    }
 }
 
 @media (max-width: 600px) {
