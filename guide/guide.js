@@ -96,6 +96,7 @@
         <div class="guide-section">
         <strong>ROUNDS & MODE</strong><br>
         Total rounds selector + difficulty mode labels so you always know the rules of the match.
+        </div>
         <div class="guide-section">
         <strong>CUSTOM DOWNLOAD CARDS</strong><br>
         Mode-Specific Neon score card (DOWNLOADABLE!!)
@@ -122,18 +123,18 @@
     function initGuide() {
         const guideBtn = document.getElementById('guideBtn');
         const guideModal = document.getElementById('guideModal');
-        const guideContent = document.getElementById('guideContent').parentElement;
+        const guideContentInner = document.getElementById('guideContent');
+        const guideContent = guideContentInner.parentElement;
 
         if (!guideBtn) return;
 
-        guideContent.innerHTML = `${guideData.welcome} ${guideData.controls} ${guideData.smartFeatures} ${guideData.musicSystem} ${guideData.modes} ${guideData.statsAndShare} ${guideData.proTips} ${guideData.credits}`;
+        guideContentInner.innerHTML = `${guideData.welcome} ${guideData.controls} ${guideData.smartFeatures} ${guideData.musicSystem} ${guideData.modes} ${guideData.statsAndShare} ${guideData.proTips} ${guideData.credits}`;
 
         function openGuide() {
             guideModal.classList.remove('hidden');
             guideBtn.textContent = 'BACK';
 
             guideContent.classList.remove('anim-out');
-
             void guideContent.offsetWidth;
             guideContent.classList.add('anim-in');
         }
