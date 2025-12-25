@@ -499,6 +499,56 @@ a,
     }
 }
 
+.rally-hype {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 6;
+}
+
+.rally-hype.hidden {
+    display: none;
+}
+
+.rally-hype span {
+    font-family: "Share Tech Mono", monospace;
+    font-size: 1.8rem;
+    color: #39ff14;
+    text-shadow: 0 0 20px #39ff14, 0 0 40px #13ff00;
+    letter-spacing: 0.18rem;
+    text-transform: uppercase;
+    opacity: 0;
+}
+
+.rally-hype span.rally-pop {
+    animation: rallyPop 0.7s ease-out forwards;
+}
+
+@keyframes rallyPop {
+    0% {
+        transform: scale(0.6);
+        opacity: 0;
+    }
+
+    20% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+
+    60% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1.1);
+        opacity: 0;
+    }
+}
+
 @media (max-width: 600px) {
     #topBar {
         top: 10px;

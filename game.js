@@ -9,6 +9,8 @@
     const rulesModeElem = root.querySelector('#rulesMode');
     const modeLabelElem = root.querySelector('#modeLabel');
     const difficultyStartBtn = root.querySelector('#difficultyStartBtn');
+    const rallyHype = root.querySelector('#rallyHype');
+    const rallyHypeText = root.querySelector('#rallyHypeText');
 
     const proTipTextElem = root.querySelector('#proTipText');
 
@@ -87,6 +89,7 @@
     const MAX_TRAIL = 10;
     let rallyCount = 0;
     let maxRally = 0;
+    let rallyHypeNext = 10;
     const rallyCountElem = root.querySelector("#rallyCount");
     let bestRallyEverRaw = localStorage.getItem('bestRallyEver');
     let bestRallyEver = bestRallyEverRaw ? Number(bestRallyEverRaw) : 0;
@@ -105,6 +108,51 @@
     let serveTimerId = null;
     let hasStartedOnce = false;
     let countdownFrameId = null;
+
+    function boostBallPulse(scale = 1.4, duration = 220) {
+      if (!ball) return;
+      ball.pulseScale = scale;
+      setTimeout(() => {
+        ball.pulseScale = 1;
+      }, duration);
+    }
+
+    function showRallyHype() {
+      if (!rallyHype || !rallyHypeText) return;
+      let msg;
+      if (rallyCount >= 10) {
+        const idx = Math.floor(Math.random() * rallyHypeMessages.length);
+        msg = rallyHypeMessages[idx];
+      } else {
+        msg = 'RALLY GETTING INTENSE!';
+      }
+
+      rallyHypeText.textContent = msg;
+
+      rallyHype.classList.remove('hidden');
+      rallyHypeText.classList.remove('rally-pop');
+      void rallyHypeText.offsetWidth;
+      rallyHypeText.classList.add('rally-pop');
+
+      speakHypeMessage(msg);
+
+      setTimeout(() => {
+        if (!rallyHype) return;
+        rallyHype.classList.add('hidden');
+      }, 1000);
+    }
+
+    function speakHypeMessage(text) {
+      if (!('speechSynthesis' in window)) return;
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1.15;
+      utterance.pitch = 0.9;
+      utterance.volume = isMuted? 0 : 0.9;
+
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utterance);
+    }
 
     function isDifficultyOpen() {
       return !difficultyModal.classList.contains('hidden');
@@ -311,6 +359,12 @@
         totalRallies++;
         rallyCountElem.textContent = rallyCount;
         maxRally = Math.max(maxRally, rallyCount);
+        if (rallyCount >= rallyHypeNext) {
+          boostBallPulse(1.55, 260);
+          showRallyHype();
+          const gap = 5 + Math.floor(Math.random() * 7);
+          rallyHypeNext = rallyCount + gap;
+        }
       }
 
       if (
@@ -326,6 +380,12 @@
         rallyCount++;
         totalRallies++;
         rallyCountElem.textContent = rallyCount;
+        if (rallyCount >= rallyHypeNext) {
+          boostBallPulse(1.55, 260);
+          showRallyHype();
+          const gap = 5 + Math.floor(Math.random() * 7);
+          rallyHypeNext = rallyCount + gap;
+        }
       }
 
       if (ball.x - ball.radius < 0) {
@@ -383,7 +443,7 @@
         currentDifficulty = 'Easy';
         easySelect.classList.add('active');
       } else if (level === 'hard') {
-        aiMissChance = 0.05;
+        aiMissChance = 0.01;
         aiSpeed = 9.8;
         baseBallSpeed = 6.5;
         maxBallSpeed = 14;
@@ -412,6 +472,17 @@
       modeLabelElem.textContent = `MODE: ${currentDifficulty.toUpperCase()} • FIRST TO REACH ${winningScore} IS THE WINNER`;
     }
 
+    const rallyHypeMessages = [
+      'INTENSE!',
+      'CRAZY!',
+      'SWEET!',
+      'THAT\'S GOOD',
+      'WHAT A RALLY!',
+      'UNREAL!',
+      'YOU ARE ON FIRE!',
+      'THIS IS HEATING UP!'
+    ];
+
     const proTips = [
       'Mouse, touch, W/S keys, or "UP & DOWN ARROWS" keys all move your paddle',
       'Space, Esc, Click (on Game canvas), or the buttons all pause & resume',
@@ -420,7 +491,15 @@
       'Mute button silences all the game SFX without touching the Music player, so that you can Have your smooth music experience while playing this game!',
       'Download your game score card at the end of your game, which you can share with your friends and even set it as a memory',
       'Longer rallies speed up the ball and make angles more extreme',
-      'Hitting near paddle edges creates sharper bounce angles!'
+      'Hitting near paddle edges creates sharper bounce angles!',
+      'The original arcade game Pong came out in 1972 and helped kick-start the entire video game industry',
+      'Early Pong machines sometimes broke simply because their coin boxes were overflowing with quarters',
+      'In a famous table tennis record, a father and son hit the ball 32,000 times in a single rally!',
+      'Pong was originally built as a project and became so popular it defined arcade gaming for years',
+      'People have told Pong game creator that they met their future spouses while playing the arcade game',
+      'Most real world table tennis rallies last only a few shots, so hitting 20+ in this game is already elite',
+      'In some countries, table tennis once got banned briefly over fears that it would harm eyesight and nerves',
+      'Pros can put up to 9000 RPM of spin on a spin on a table tennis ball, making it curve and kick like crazy'
     ];
 
     let proTipIndex = 0;
@@ -441,7 +520,7 @@
 
           if (proTipCharIndex >= full.length) {
             proTipDeleting = true;
-            proTipTimerId = setTimeout(step, 3000);
+            proTipTimerId = setTimeout(step, 5000);
             return;
           }
         } else {
@@ -474,6 +553,7 @@
     function updateScore(playerScored) {
       rallyCount = 0;
       rallyCountElem.textContent = rallyCount;
+      rallyHypeNext = 10;
       if (playerScored) {
         playerScore++;
         playerScoreElem.textContent = playerScore;
@@ -538,6 +618,7 @@
       rallyCountElem.textContent = rallyCount;
       maxRally = 0;
       totalRallies = 0;
+      rallyHypeNext = 10;
 
       root.querySelector('#newBestBadge').classList.add('hidden');
 
