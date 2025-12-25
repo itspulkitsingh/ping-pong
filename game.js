@@ -5,7 +5,7 @@
     const normalSelect = root.querySelector("#normalSelect");
     const hardSelect = root.querySelector("#hardSelect");
     const roundsSelect = root.querySelector('#roundSelect');
-    const rulesRoundsElem = root.querySelector('#rulesRounds');
+    const rulesRoundsElem = root.querySelector('#ruleRounds');
     const rulesModeElem = root.querySelector('#rulesMode');
     const modeLabelElem = root.querySelector('#modeLabel');
     const difficultyStartBtn = root.querySelector('#difficultyStartBtn');
@@ -139,7 +139,7 @@
       const summaryScore = root.querySelector('#summaryScore');
       const summaryRallies = root.querySelector('#summaryRallies');
       const summaryMode = root.querySelector('#modalDifficulty');
-      const summaryBestRally = root.querySelector('#bestRallyEver');
+      const summaryBestRally = root.querySelector('#summarybestRally');
 
       title.textContent = won ? 'CONGRATULATIONS' : 'GAME OVER';
       title.style.color = won ? '#39ff14' : '#ff0000ff';
@@ -565,8 +565,6 @@
         backBtn.classList.remove('hidden');
       }
 
-      startProTipLoop();
-
       if (guideDock) guideDock.classList.remove('hidden');
     }
 
@@ -617,6 +615,7 @@
           setTimeout(() => {
             countdownModal.classList.add('hidden');
             isServing = false;
+            startProTipLoop();
           }, THIDE - TGO);
 
           countdownFrameId = null;
@@ -901,8 +900,6 @@
         musicFadeUp();
         lockBackButton();
 
-        startProTipLoop();
-
         if (backBtn) backBtn.classList.add('hidden');
 
         if (isFreshStart) {
@@ -1064,7 +1061,7 @@
 
       showDifficultyModal();
 
-      bestRallyElem.textContent = `Best Rally Ever: ${bestRallyEver}`;
+      bestRallyElem.textContent = `LONGEST RALLY: ${bestRallyEver}`;
 
       muteBtn.addEventListener("click", () => {
         isMuted = !isMuted;
