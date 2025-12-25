@@ -376,7 +376,7 @@
       hardSelect.classList.remove('active');
 
       if (level === 'easy') {
-        aiMissChance = 0.4;
+        aiMissChance = 0.3;
         aiSpeed = 5.2;
         baseBallSpeed = 5;
         maxBallSpeed = 9;
@@ -390,7 +390,7 @@
         currentDifficulty = 'Hard'
         hardSelect.classList.add('active');
       } else {
-        aiMissChance = 0.22;
+        aiMissChance = 0.2;
         aiSpeed = 7.1;
         baseBallSpeed = 5.4;
         maxBallSpeed = 10.8;
