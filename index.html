@@ -56,18 +56,9 @@
   <div id="screenRoot">
     <div id="welcomeScreen" class="screen-slide-in">
       <div class="container tilt">
-        <h1 class="neon-text" id="mainTitle">Welcome to the Cool Ping Pong!</h1>
-        <p class="neon-text" id="introText">
-          Experience a classic Ping Pong game in retro neon style with mind calming music!
-        </p>
-        <p class="neon-text">
-          <b> Rules:</b> Challenge the computer, Reach 5 points first, Calm yourself with the retro glowing green
-          effects!
-        </p>
-        <p class="neon-text" id="descText">
-          <b>Enjoy!</b>
-        </p>
-        <button id="enterGameBtn" class="neon-btn">Enter Game</button>
+        <h1 class="neon-text" id="mainTitle">WELCOME TO PING PONG!</h1>
+        <p class="neon-text" id="intoText">Experience a fast, retro neon ping pong duel with reactive computer based paddle, Glowing visuals and built-in vibe music</p>
+        <button id="enterGameBtn" class="neon-btn">Enter "V/S COMPUTER" MODE</button>
       </div>
     </div>
   </div>
@@ -101,11 +92,21 @@
     function wrapLetters(id) {
       const el = document.getElementById(id);
       if (!el) return;
-      el.innerHTML = el.textContent
-        .split('')
-        .map(ch => (ch === ' ' ? ' ' : `<span class="neon-letter">${ch}</span>`))
+      const text = el.textContent;
+      const parts = text.split(/(\s+)/);
+
+      el.innerHTML = parts
+        .map(part => {
+          if (/^\s+$/.test(part)) {
+            return part;
+          }
+          return [...part]
+            .map(ch => `<span class="neon-letter">${ch}</span>`)
+            .join('');
+        })
         .join('');
     }
+
 
     function initWelcomeEffects() {
       wrapLetters('mainTitle');
