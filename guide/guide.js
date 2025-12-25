@@ -54,6 +54,19 @@
         <strong> FULLY DRAGGABLE </strong><br>
         Drag the music player anywhere!
         </div>
+        <div class="guide-section">
+        <strong> LOOP & PLAYER FEATURES</strong><br>
+        • Tap on ⏩ to skip 10s forward, double tap to switch to the next song<br>
+        • Tap on ⏪ to rewind 10s backward, double tap to switch to start of the song, double tap at the begginning of the song to go back to the previously played song 
+        </div>
+        <div class="guide-section">
+        <strong>NEON VISUALIZER</strong><br>
+        Multi-wave visualizer reacts to the music for extra soothing cool vibe, every wave syncs with wave in a flow
+        </div>
+        <div class="guide-section">
+        <strong>GAME AWARE VOLUME</strong><br>
+        Game pause / resume can softly switch music down or up so it never feels too loud during breaks.
+        </div>
         `,
         modes: `
         <h3> ⚡ 4 GAME MODES (COMING SOON!!) ⚡ </h3>
@@ -80,6 +93,9 @@
         <strong>LIVE TRACKING</strong><br>
         Score, Rallies, Best Rally (persists!)
         </div>
+        <div class="guide-section">
+        <strong>ROUNDS & MODE</strong><br>
+        Total rounds selector + difficulty mode labels so you always know the rules of the match.
         <div class="guide-section">
         <strong>CUSTOM DOWNLOAD CARDS</strong><br>
         Mode-Specific Neon score card (DOWNLOADABLE!!)
