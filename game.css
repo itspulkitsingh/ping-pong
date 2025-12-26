@@ -474,7 +474,7 @@ a,
 }
 
 .pro-tip-prefix {
-    color: #ff4444;
+    color: #44cdff;
     font-weight: 700;
     margin-right: 6px;
     font-size: 1.5rem;
@@ -506,7 +506,7 @@ a,
     align-items: center;
     justify-content: center;
     pointer-events: none;
-    z-index: 6;
+    z-index: 3000;
 }
 
 .rally-hype.hidden {
@@ -514,37 +514,39 @@ a,
 }
 
 .rally-hype span {
+    position: absolute;
     font-family: "Share Tech Mono", monospace;
     font-size: 1.8rem;
-    color: #39ff14;
-    text-shadow: 0 0 20px #39ff14, 0 0 40px #13ff00;
+    color: #ff4f14;
+    text-shadow: 0 0 20px #ff3714, 0 0 40px #ff3714;
     letter-spacing: 0.18rem;
     text-transform: uppercase;
     opacity: 0;
+    transform-origin: center;
 }
 
 .rally-hype span.rally-pop {
-    animation: rallyPop 0.7s ease-out forwards;
+    animation: rallyPop 4.5s ease-out forwards;
 }
 
 @keyframes rallyPop {
     0% {
-        transform: scale(0.6);
+        transform: translateY(12px) scale(0.9);
         opacity: 0;
     }
 
-    20% {
-        transform: scale(1.2);
+    10% {
+        transform: translateY(0) scale(1.02);
         opacity: 1;
     }
 
-    60% {
-        transform: scale(1);
+    80% {
+        transform: translateY(0) scale(1);
         opacity: 1;
     }
 
     100% {
-        transform: scale(1.1);
+        transform: translateY(-6px) scale(0.98);
         opacity: 0;
     }
 }

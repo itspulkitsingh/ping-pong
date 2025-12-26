@@ -19,6 +19,7 @@
 
     const playerScoreElem = root.querySelector("#playerScore");
     const computerScoreElem = root.querySelector("#computerScore");
+
     const startBtn = root.querySelector("#startBtn");
     const pauseBtn = root.querySelector("#pauseBtn");
     const resetBtn = root.querySelector("#resetBtn");
@@ -83,6 +84,8 @@
     let computerPaddle = {};
     let playerScore = 0;
     let computerScore = 0;
+    let totalPoints = 0;
+    let wasBehindThisMatch = false;
     let shakeX = 0;
     let shakeY = 0;
     let particles = [];
@@ -109,6 +112,9 @@
     let hasStartedOnce = false;
     let countdownFrameId = null;
 
+    let isMessageFreeze = false;
+    let messageFreezeUntil = 0;
+
     function boostBallPulse(scale = 1.4, duration = 220) {
       if (!ball) return;
       ball.pulseScale = scale;
@@ -119,6 +125,12 @@
 
     function showRallyHype() {
       if (!rallyHype || !rallyHypeText) return;
+
+      rallyHypeText.style.position = '';
+      rallyHypeText.style.left = '';
+      rallyHypeText.style.top = '';
+      rallyHypeText.style.transform = '';
+      
       let msg;
       if (rallyCount >= 10) {
         const idx = Math.floor(Math.random() * rallyHypeMessages.length);
@@ -142,16 +154,130 @@
       }, 1000);
     }
 
+    function showMatchPointMessage(isPlayer) {
+      if (!rallyHype || !rallyHypeText) return;
+
+      rallyHypeText.style.position = '';
+      rallyHypeText.style.left = '';
+      rallyHypeText.style.top = '';
+      rallyHypeText.style.transform = '';
+
+      const msg = isPlayer ? 'MATCH POINT • YOU CAN DO IT!' : 'MATCH POINT • TRY HARDER';
+
+      rallyHypeText.textContent = msg;
+      rallyHype.classList.remove('hidden');
+      rallyHypeText.classList.remove('rally-pop');
+      void rallyHypeText.offsetWidth;
+      rallyHypeText.classList.add('rally-pop');
+
+      beginMessageFreeze(3500);
+      speakMatchPoint(isPlayer);
+
+      setTimeout(() => {
+        if (!rallyHype) return;
+        rallyHype.classList.add('hidden');
+      }, 3500);
+    }
+
+    function showComebackMessage() {
+      if (!rallyHype || !rallyHypeText) return;
+
+      rallyHypeText.style.position = '';
+      rallyHypeText.style.left = '';
+      rallyHypeText.style.top = '';
+      rallyHypeText.style.transform = '';
+
+      const msg = 'COMEBACK CHANCE!!';
+      rallyHypeText.textContent = msg;
+      rallyHype.classList.remove('hidden');
+      rallyHypeText.classList.remove('rally-pop');
+      void rallyHypeText.offsetWidth;
+      rallyHypeText.classList.add('rally-pop');
+
+      beginMessageFreeze(3500);
+      speakComebackChance();
+
+      setTimeout(() => {
+        if (!rallyHype) return;
+        rallyHype.classList.add('hidden');
+      }, 3500);
+    }
+
+    function setRandomMissPosition(playerMissed) {
+      if (!rallyHypeText || !rallyHype) return;
+
+      const sideMin = playerMissed ? 8 : 55;
+      const sideMax = playerMissed ? 35 : 90;
+      const topMin = 15;
+      const topMax = 60;
+
+      const left = sideMin + Math.random() * (sideMax - sideMin);
+      const top = topMin + Math.random() * (topMax - topMin);
+      const angle = (Math.random() * 30 - 15).toFixed(1);
+
+      rallyHypeText.style.position = 'absolute';
+      rallyHypeText.style.left = `${left}%`;
+      rallyHypeText.style.top = `${top}%`;
+      rallyHypeText.style.transform =
+        `translate(-50%, -50%) rotate(${angle}deg)`;
+    }
+
+
+    function showMissMessage(playerMissed) {
+      if (!rallyHype || !rallyHypeText) return;
+
+      const pool = playerMissed ? missMessagesPlayer : missMessagesAI;
+      const idx = Math.floor(Math.random() * pool.length);
+      const msg = pool[idx];
+
+      rallyHypeText.textContent = msg;
+      setRandomMissPosition(playerMissed);
+      rallyHype.classList.remove('hidden');
+      rallyHypeText.classList.remove('rally-pop');
+      void rallyHypeText.offsetWidth;
+      rallyHypeText.classList.add('rally-pop');
+
+      beginMessageFreeze(1500);
+      if (playerMissed) {
+        speakHypeMessage(msg);
+      }
+
+      setTimeout(() => {
+        if (!rallyHype) return;
+        rallyHype.classList.add('hidden');
+      }, 1500);
+    }
+
     function speakHypeMessage(text) {
       if (!('speechSynthesis' in window)) return;
 
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 1.15;
-      utterance.pitch = 0.9;
-      utterance.volume = isMuted? 0 : 0.9;
+
+      const voices = window.speechSynthesis.getVoices();
+      const preferred = voices.find(v =>
+        /en/i.test(v.lang) &&
+        /male|deep|narrator|news/i.test(v.name)
+      );
+      if (preferred) {
+        utterance.voice = preferred;
+      }
+
+      utterance.rate = 0.9;
+      utterance.pitch = 0.7;
+      utterance.volume = isMuted ? 0 : 1.0;
 
       window.speechSynthesis.cancel();
       window.speechSynthesis.speak(utterance);
+    }
+
+    function speakMatchPoint(isPlayer) {
+      const text = isPlayer ? 'Match Point for you!' : 'Match Point, try harder!';
+      speakHypeMessage(text);
+    }
+
+    function speakComebackChance() {
+      const text = 'Comeback chance!';
+      speakHypeMessage(text);
     }
 
     function isDifficultyOpen() {
@@ -187,7 +313,7 @@
       const summaryScore = root.querySelector('#summaryScore');
       const summaryRallies = root.querySelector('#summaryRallies');
       const summaryMode = root.querySelector('#modalDifficulty');
-      const summaryBestRally = root.querySelector('#summarybestRally');
+      const summaryBestRally = root.querySelector('#summaryBestRally');
 
       title.textContent = won ? 'CONGRATULATIONS' : 'GAME OVER';
       title.style.color = won ? '#39ff14' : '#ff0000ff';
@@ -322,6 +448,12 @@
     function update(delta) {
       if (gameOver) return;
 
+      if (isMessageFreeze) {
+        ball.x = canvas.width / 2;
+        ball.y = canvas.height / 2;
+        return;
+      }
+
       if (isServing) {
         return;
       }
@@ -391,10 +523,12 @@
       if (ball.x - ball.radius < 0) {
         missSound.currentTime = 0;
         missSound.play();
+        showMissMessage(true);
         updateScore(false);
       } else if (ball.x + ball.radius > canvas.width) {
         missSound.currentTime = 0;
         missSound.play();
+        showMissMessage(false);
         updateScore(true);
       }
 
@@ -483,6 +617,21 @@
       'THIS IS HEATING UP!'
     ];
 
+    const missMessagesPlayer = [
+      'OOPS!',
+      'UH OH!',
+      'WHOOPS!',
+      'SO CLOSE!',
+      'GET THE NEXT ONE!'
+    ];
+
+    const missMessagesAI = [
+      'YOU GOT IT!',
+      'NICE ONE!',
+      'COMPUTER MISSED',
+      'KEEP IT UP!'
+    ];
+
     const proTips = [
       'Mouse, touch, W/S keys, or "UP & DOWN ARROWS" keys all move your paddle',
       'Space, Esc, Click (on Game canvas), or the buttons all pause & resume',
@@ -554,12 +703,31 @@
       rallyCount = 0;
       rallyCountElem.textContent = rallyCount;
       rallyHypeNext = 10;
+      totalPoints++;
       if (playerScored) {
         playerScore++;
         playerScoreElem.textContent = playerScore;
       } else {
         computerScore++;
         computerScoreElem.textContent = computerScore;
+      }
+
+      if (playerScore < computerScore) {
+        wasBehindThisMatch = true;
+      }
+
+      const oneAwayPlayer = playerScore === winningScore - 1;
+      const oneAwayAI = computerScore === winningScore - 1;
+      const diff = computerScore - playerScore;
+
+      if (oneAwayPlayer || oneAwayAI) {
+        const roll = Math.random();
+
+        if (roll < 0.5) {
+          showComebackMessage();
+        } else {
+          showMatchPointMessage(oneAwayPlayer);
+        }
       }
 
       shakeScreen(18);
@@ -592,6 +760,9 @@
       computerScore = 0;
       playerScoreElem.textContent = playerScore;
       computerScoreElem.textContent = computerScore;
+
+      totalPoints = 0;
+      wasBehindThisMatch = false;
 
       playerPaddle.x = 0;
       playerPaddle.y = (canvas.height - paddleHeight) / 2;
@@ -804,6 +975,14 @@
       }
     }
 
+    function beginMessageFreeze(durationMs = 1400) {
+      isMessageFreeze = true;
+      messageFreezeUntil = performance.now() + durationMs;
+      ball.x = canvas.width / 2;
+      ball.y = canvas.height / 2;
+      ball.trail = [];
+    }
+
     function draw() {
       ctx.save();
       ctx.translate(shakeX, shakeY);
@@ -963,6 +1142,10 @@
       }
       const delta = (timestamp - lastTime) / 1000;
       lastTime = timestamp;
+
+      if (isMessageFreeze && timestamp >= messageFreezeUntil) {
+        isMessageFreeze = false;
+      }
 
       update(delta);
       draw();
