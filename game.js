@@ -1,5 +1,9 @@
 (function () {
   function initGameScreen(root) {
+    const perfectBadge = root.querySelector('#perfectBadge');
+    const cleanSheetBadge = root.querySelector('#cleanSheetBadge');
+    const marathonBadge = root.querySelector('#marathonBadge');
+
     const difficultyModal = root.querySelector("#difficultyModal");
     const easySelect = root.querySelector("#easySelect");
     const normalSelect = root.querySelector("#normalSelect");
@@ -130,7 +134,7 @@
       rallyHypeText.style.left = '';
       rallyHypeText.style.top = '';
       rallyHypeText.style.transform = '';
-      
+
       let msg;
       if (rallyCount >= 10) {
         const idx = Math.floor(Math.random() * rallyHypeMessages.length);
@@ -302,6 +306,24 @@
       }
     }
 
+    function updateBadges() {
+      if (!perfectBadge || !cleanSheetBadge || !marathonBadge) return;
+
+      perfectBadge.classList.add('hidden');
+      cleanSheetBadge.classList.add('hidden');
+      marathonBadge.classList.add('hidden');
+
+      if (computerScore === 0 && playerScore > 0) {
+        perfectBadge.classList.remove('hidden');
+      }
+      if (playerScore === 0 && computerScore > 0) {
+        cleanSheetBadge.classList.remove('hidden');
+      }
+      if (maxRally >= 50) {
+        marathonBadge.classList.remove('hidden');
+      }
+    }
+
     function showModal(won) {
       const modal = root.querySelector('#gameOverModal');
       const title = root.querySelector('#modalTitle');
@@ -314,6 +336,8 @@
       const summaryRallies = root.querySelector('#summaryRallies');
       const summaryMode = root.querySelector('#modalDifficulty');
       const summaryBestRally = root.querySelector('#summaryBestRally');
+
+      updateBadges();
 
       title.textContent = won ? 'CONGRATULATIONS' : 'GAME OVER';
       title.style.color = won ? '#39ff14' : '#ff0000ff';
@@ -791,6 +815,10 @@
       totalRallies = 0;
       rallyHypeNext = 10;
 
+      if (perfectBadge) perfectBadge.classList.add('hidden');
+      if (cleanSheetBadge) cleanSheetBadge.classList.add('hidden');
+      if (marathonBadge) marathonBadge.classList.add('hidden');
+
       root.querySelector('#newBestBadge').classList.add('hidden');
 
       if (pausedOverlay) pausedOverlay.classList.add('hidden');
@@ -1051,13 +1079,30 @@
       cctx.restore();
 
       cctx.save();
+      cctx.textAlign = 'center';
+      cctx.fillStyle = '#13f3ffff';
+      cctx.shadowColor = '#13f3ffff';
+      cctx.shadowBlur = 16;
+      cctx.font = '18px "Share Tech Mono", monospace';
+
+      let badgeLine = '';
+      if (computerScore === 0 && playerScore > 0) badgeLine = 'PERFECT GAME';
+      else if (playerScore === 0 && computerScore > 0) badgeLine = 'CLEAN SHEET';
+      else if (maxRally >= 50) badgeLine = 'MARATHON RALLY';
+
+      if (badgeLine) {
+        cctx.fillText(badgeLine, w / 2, 180);
+      }
+      cctx.restore();
+
+      cctx.save();
       cctx.strokeStyle = 'rgba(57, 255, 20, 0.9)';
       cctx.lineWidth = 2;
       cctx.shadowColor = '#39ff14';
       cctx.shadowBlur = 14;
       cctx.beginPath();
-      cctx.moveTo(70, 170);
-      cctx.lineTo(w - 70, 170);
+      cctx.moveTo(70, 195);
+      cctx.lineTo(w - 70, 195);
       cctx.stroke();
       cctx.restore();
 
@@ -1107,7 +1152,21 @@
       cctx.fillStyle = '#39ff14';
       cctx.font = '20px "Share Tech Mono", monospace';
       cctx.fillText(`TOTAL RALLIES: ${totalRallies}`, w / 2, cardY + 60);
+
       cctx.fillText(`LONGEST RALLY PLAYED: ${maxRally}`, w / 2, cardY + 85);
+
+      if (maxRally > bestRallyEver) {
+        cctx.save();
+        cctx.fillStyle = '#ffffffff';
+        cctx.shadowColor = '#ffffffff';
+        cctx.shadowBlur = 12;
+        cctx.font = '16px "Share Tech Mono", monospace';
+        cctx.textAlign = 'right';
+        cctx.fillText('NEW BEST!', w / 2 + 110, cardY + 85);
+        cctx.restore();
+      }
+
+
       cctx.fillText(`MODE: ${currentDifficulty.toUpperCase()}`, w / 2, cardY + 110);
       cctx.fillText(`TOTAL ROUNDS: ${winningScore}`, w / 2, cardY + 135);
 

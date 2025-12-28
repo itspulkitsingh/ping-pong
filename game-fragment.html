@@ -61,7 +61,7 @@
         <div id="scoreBoard" class="neon-text">
             <span id="playerScore">0</span> | <span id="computerScore">0</span>
         </div>
-        
+
         <div id="playfieldWrapper">
             <div id="pausedOverlay" class="hidden">
                 <div class="paused-backdrop"></div>
@@ -81,7 +81,7 @@
         <br>
         <br>
         <div id="proTipLine" class="pro-tip-line">
-            <strong class="pro-tip-prefix">Did you know?  </strong><br>
+            <strong class="pro-tip-prefix">Did you know? </strong><br>
             <span id="proTipText"></span>
             <span class="pro-tip-cursor">|</span>
         </div>
@@ -97,6 +97,7 @@
         <div id="gameOverModal" class="modal hidden">
             <div class="modal-content">
                 <h2 id="modalTitle" class="neon-text"></h2>
+                <span id="newBestBadge" class="badge hidden">NEW BEST!</span>
                 <p id="matchSummary" class="neon-text small-summary"></p>
 
                 <div id="gameOverStats" class="score-grid">
@@ -116,7 +117,11 @@
                     <div class="score-value" id="summaryBestRally"></div>
                 </div>
 
-                <span id="newBestBadge" class="badge hidden">NEW BEST!</span>
+                <div id="badgeRow">
+                    <span id="perfectBadge" class="badge hidden">PERFECT GAME</span>
+                    <span id="cleanSheetBadge" class="badge hidden">CLEAN SHEET</span>
+                    <span id="marathonBadge" class="badge hidden">MARATHON RALLY</span>
+                </div>
 
                 <div class="modal-buttons">
                     <button id="playAgainBtn" class="neon-btn large">Play again</button>
