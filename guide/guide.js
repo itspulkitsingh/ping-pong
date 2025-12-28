@@ -102,12 +102,18 @@
         Score, Rallies, Best Rally (persists!)
         </div>
         <div class="guide-section">
+        <strong>ACHIEVEMENT BADGES</strong><br>
+        🎖️ PERFECT GAME (AI scores 0)<br>
+        🛡️ CLEAN SHEET (You score 0)<br>
+        🏃 MARATHON RALLY (50+ hits)
+        </div>
+        <div class="guide-section">
         <strong>ROUNDS & MODE</strong><br>
         Total rounds selector + difficulty mode labels so you always know the rules of the match.
         </div>
         <div class="guide-section">
         <strong>CUSTOM DOWNLOAD CARDS</strong><br>
-        Mode-Specific Neon score card (DOWNLOADABLE!!)
+        Mode-Specific Neon score card (DOWNLOADABLE!!) with Achievement included
         </div>
         `,
         proTips: `
