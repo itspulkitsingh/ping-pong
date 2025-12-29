@@ -51,8 +51,30 @@
                 Rally: <span id="rallyCount">0</span>
             </div>
             <div id="topRightControls">
-                <button id="muteBtn" class="neon-btn small-icon">🔊</button>
                 <button id="backBtn" class="neon-btn">BACK</button>
+                <button id="muteBtn" class="neon-btn small-icon">🔊</button>
+                <div id="optionsBtn" class="neon-btn small-icon">⚙️</div>
+                <div id="optionsPanel" class="options-panel hidden">
+                    <div class="option-row">
+                        <label>Voice Effects</label>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="ttsToggle" checked>
+                            <span class="slider"></span>
+                        </div>
+                    </div>
+                    <div class="option-row">
+                        <label>SFX Volume</label>
+                        <input type="range" id="sfxVolume" min="0" max="1" step="0.1" value="0.5">
+                        <span id="sfxVolumeValue">50%</span>
+                    </div>
+                    <div class="option-row">
+                        <label>Sound Effects (SFX)</label>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="sfxToggle">
+                            <span class="slider"></span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -97,7 +119,6 @@
         <div id="gameOverModal" class="modal hidden">
             <div class="modal-content">
                 <h2 id="modalTitle" class="neon-text"></h2>
-                <span id="newBestBadge" class="badge hidden">NEW BEST!</span>
                 <p id="matchSummary" class="neon-text small-summary"></p>
 
                 <div id="gameOverStats" class="score-grid">
@@ -118,6 +139,7 @@
                 </div>
 
                 <div id="badgeRow">
+                    <span id="newBestBadge" class="badge hidden">NEW LONGEST RALLY!</span>
                     <span id="perfectBadge" class="badge hidden">PERFECT GAME</span>
                     <span id="cleanSheetBadge" class="badge hidden">CLEAN SHEET</span>
                     <span id="marathonBadge" class="badge hidden">MARATHON RALLY</span>

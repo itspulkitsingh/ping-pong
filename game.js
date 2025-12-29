@@ -67,6 +67,19 @@
     const muteBtn = root.querySelector("#muteBtn");
     let isMuted = false;
 
+    const optionsBtn = root.querySelector('#optionsBtn');
+    const optionsPanel = root.querySelector('#optionsPanel');
+    const ttsToggle = root.querySelector('#ttsToggle');
+    const sfxVolume = root.querySelector('#sfxVolume');
+    const sfxVolumeValue = root.querySelector('#sfxVolumeValue');
+    const sfxToggle = root.querySelector('#sfxToggle');
+    let ttsEnabled = localStorage.getItem('ttsEnabled') !== 'false';
+    let sfxVolumeLevel = parseFloat(localStorage.getItem('sfxVolume')) || 0.5;
+    let sfxEnabled = localStorage.getItem('sfxEnabled') === 'true';
+    if (ttsToggle) ttsToggle.checked = ttsEnabled;
+    if (sfxToggle) sfxToggle.checked = sfxEnabled;
+    if (sfxVolume) sfxVolume.value = sfxVolumeLevel;
+
     function musicFadeDown() {
       if (window.NeonMusic && !isMuted) {
         window.NeonMusic.fadeDown();
@@ -118,6 +131,84 @@
 
     let isMessageFreeze = false;
     let messageFreezeUntil = 0;
+
+    if (ttsToggle) ttsToggle.checked = ttsEnabled;
+    if (sfxVolume) sfxVolume.value = sfxVolumeLevel;
+    if (sfxVolumeValue) sfxVolumeValue.textContent = `${Math.round(sfxVolumeLevel * 100)}%`;
+
+    const baseVolume = sfxVolumeLevel * 0.5;
+    hitSound.volume = sfxEnabled ? baseVolume : 0;
+    missSound.volume = sfxEnabled ? baseVolume : 0;
+    winSound.volume = sfxEnabled ? baseVolume : 0;
+    loseSound.volume = sfxEnabled ? baseVolume : 0;
+    countdownBeep.volume = sfxEnabled ? baseVolume : 0;
+
+    function updateOptionsVisibility() {
+      if (optionsBtn) optionsBtn.style.display = isMuted ? 'none' : 'inline-flex';
+    }
+    updateOptionsVisibility();
+
+    if (optionsBtn && optionsPanel) {
+      optionsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        optionsPanel.classList.toggle('hidden');
+      });
+      document.addEventListener('click', (e) => {
+        if (!optionsPanel.contains(e.target) && !optionsBtn.contains(e.target)) {
+          optionsPanel.classList.add('hidden');
+        }
+      });
+    }
+
+    const ttsSlider = optionsPanel?.querySelector('.option-row:nth-child(1) .slider');
+    if (ttsSlider && ttsToggle) {
+      ttsSlider.style.cursor = 'pointer';
+      ttsSlider.addEventListener('click', (e) => {
+        e.stopPropagation();
+        ttsToggle.checked = !ttsToggle.checked;
+        ttsEnabled = ttsToggle.checked;
+        localStorage.setItem('ttsEnabled', ttsEnabled);
+        console.log('✅ TTS:', ttsEnabled);
+      });
+    }
+
+    const sfxSlider = optionsPanel?.querySelector('.option-row:nth-child(3) .slider');
+    if (sfxSlider && sfxToggle) {
+      sfxSlider.style.cursor = 'pointer';
+      sfxSlider.addEventListener('click', (e) => {
+        e.stopPropagation();
+        sfxToggle.checked = !sfxToggle.checked;
+        sfxEnabled = sfxToggle.checked;
+        localStorage.setItem('sfxEnabled', sfxEnabled);
+
+        const baseVolume = sfxVolumeLevel * 0.5;
+        hitSound.volume = sfxEnabled ? baseVolume : 0;
+        missSound.volume = sfxEnabled ? baseVolume : 0;
+        winSound.volume = sfxEnabled ? baseVolume : 0;
+        loseSound.volume = sfxEnabled ? baseVolume : 0;
+        countdownBeep.volume = sfxEnabled ? baseVolume : 0;
+
+        console.log('✅ Sound Effects:', sfxEnabled);
+      });
+    }
+
+    if (sfxVolume && sfxVolumeValue) {
+      sfxVolume.value = sfxVolumeLevel;
+      sfxVolumeValue.textContent = `${Math.round(sfxVolumeLevel * 100)}%`;
+      sfxVolume.addEventListener('input', (e) => {
+        e.stopPropagation();
+        sfxVolumeLevel = parseFloat(sfxVolume.value);
+        sfxVolumeValue.textContent = `${Math.round(sfxVolumeLevel * 100)}%`;
+        localStorage.setItem('sfxVolume', sfxVolumeLevel);
+
+        const baseVolume = sfxVolumeLevel * 0.5;
+        hitSound.volume = sfxEnabled ? baseVolume : 0;
+        missSound.volume = sfxEnabled ? baseVolume : 0;
+        winSound.volume = sfxEnabled ? baseVolume : 0;
+        loseSound.volume = sfxEnabled ? baseVolume : 0;
+        countdownBeep.volume = sfxEnabled ? baseVolume : 0;
+      });
+    }
 
     function boostBallPulse(scale = 1.4, duration = 220) {
       if (!ball) return;
@@ -253,6 +344,7 @@
     }
 
     function speakHypeMessage(text) {
+      if (!ttsEnabled) return;
       if (!('speechSynthesis' in window)) return;
 
       const utterance = new SpeechSynthesisUtterance(text);
@@ -275,11 +367,13 @@
     }
 
     function speakMatchPoint(isPlayer) {
+      if (!ttsEnabled) return;
       const text = isPlayer ? 'Match Point for you!' : 'Match Point, try harder!';
       speakHypeMessage(text);
     }
 
     function speakComebackChance() {
+      if (!ttsEnabled) return;
       const text = 'Comeback chance!';
       speakHypeMessage(text);
     }
@@ -455,6 +549,7 @@
       loseSound.muted = isMuted;
       countdownBeep.muted = isMuted;
       muteBtn.textContent = isMuted ? "🔇" : "🔊";
+      updateOptionsVisibility();
     }
 
     function applyPaddleBounce(paddle) {
@@ -508,13 +603,27 @@
       ) {
         ball.x = playerPaddle.x + playerPaddle.width + ball.radius;
         applyPaddleBounce(playerPaddle);
+        const hitIntensity = Math.min(1.2, Math.sqrt(ball.speedX * ball.speedX + ball.speedY * ball.speedY) / 8);
+        hitSound.volume = 0.2 + hitIntensity * 0.3;
         hitSound.currentTime = 0;
-        hitSound.play();
-        createParticles(ball.x, ball.y);
+        if (sfxEnabled && !isMuted) {
+          hitSound.currentTime = 0;
+          hitSound.play().catch(() => { });
+        }
+        createScaledParticles(ball.x, ball.y, hitIntensity);
+        boostBallPulse(1.2 + hitIntensity * 0.6, 280);
         rallyCount++;
         totalRallies++;
         rallyCountElem.textContent = rallyCount;
         maxRally = Math.max(maxRally, rallyCount);
+
+        const speed = Math.sqrt(ball.speedX * ball.speedX + ball.speedY * ball.speedY);
+        if (rallyCount >= 20 && speed >= 9) {
+          ball.isRGB = true;
+          ball.rgbPhase = (ball.rgbPhase || 0) + 0.15;
+          if (ball.rgbPhase > Math.PI * 2) ball.rgbPhase -= Math.PI * 2;
+        }
+
         if (rallyCount >= rallyHypeNext) {
           boostBallPulse(1.55, 260);
           showRallyHype();
@@ -530,9 +639,15 @@
       ) {
         ball.x = computerPaddle.x - ball.radius;
         applyPaddleBounce(computerPaddle);
+        const hitIntensity = Math.min(1.2, Math.sqrt(ball.speedX * ball.speedX + ball.speedY * ball.speedY) / 8);
+        hitSound.volume = 0.2 + hitIntensity * 0.3;
         hitSound.currentTime = 0;
-        hitSound.play();
-        createParticles(ball.x, ball.y);
+        if (sfxEnabled && !isMuted) {
+          hitSound.currentTime = 0;
+          hitSound.play().catch(() => { });
+        }
+        createScaledParticles(ball.x, ball.y, hitIntensity);
+        boostBallPulse(1.2 + hitIntensity * 0.6, 280);
         rallyCount++;
         totalRallies++;
         rallyCountElem.textContent = rallyCount;
@@ -546,12 +661,18 @@
 
       if (ball.x - ball.radius < 0) {
         missSound.currentTime = 0;
-        missSound.play();
+        if (sfxEnabled && !isMuted) {
+          missSound.currentTime = 0;
+          missSound.play().catch(() => { });
+        }
         showMissMessage(true);
         updateScore(false);
       } else if (ball.x + ball.radius > canvas.width) {
         missSound.currentTime = 0;
-        missSound.play();
+        if (sfxEnabled && !isMuted) {
+          missSound.currentTime = 0;
+          missSound.play().catch(() => { });
+        }
         showMissMessage(false);
         updateScore(true);
       }
@@ -758,11 +879,17 @@
 
       if (playerScore >= winningScore) {
         winSound.currentTime = 0;
-        winSound.play();
+        if (sfxEnabled && !isMuted) {
+          winSound.currentTime = 0;
+          winSound.play().catch(() => { });
+        }
         showModal(true);
       } else if (computerScore >= winningScore) {
         loseSound.currentTime = 0;
-        loseSound.play();
+        if (sfxEnabled && !isMuted) {
+          loseSound.currentTime = 0;
+          loseSound.play().catch(() => { });
+        }
         showModal(false);
       } else {
         isServing = false;
@@ -855,6 +982,8 @@
       particles = [];
       ball.speedX = baseBallSpeed * (playerServe ? 1 : -1);
       ball.speedY = baseBallSpeed * (Math.random() * 2 - 1);
+      ball.rgbPhase = 0;
+      ball.isRGB = false;
     }
 
     function startServe(playerServe) {
@@ -881,7 +1010,8 @@
 
       countdownBeep.currentTime = 0;
       countdownBeep.pause();
-      if (!isMuted) {
+      if (sfxEnabled && !isMuted) {
+        countdownBeep.currentTime = 0;
         countdownBeep.play().catch(() => { });
       }
 
@@ -932,10 +1062,29 @@
 
     function drawBall() {
       ctx.save();
-      ctx.fillStyle = "#39ff14";
-      ctx.shadowColor = "#39ff14";
-      ctx.shadowBlur = 23;
-      const r = ball.radius * (ball.pulseScale || 1);
+
+      const speed = Math.sqrt(ball.speedX * ball.speedX + ball.speedY * ball.speedY);
+
+      let ballColor;
+      if (rallyCount >= 25) {
+        const time = Date.now() * 0.003;
+        const r = Math.floor((Math.sin(time) + 1) * 127);
+        const g = Math.floor((Math.sin(time + 2.09) + 1) * 127);
+        const b = Math.floor((Math.sin(time + 4.18) + 1) * 127);
+        ballColor = `rgb(${r},${g},${b})`;
+      } else if (speed < 8) {
+        ballColor = '#ffffff';
+      } else if (speed < 10) {
+        ballColor = '#ff9900ff';
+      } else {
+        ballColor = '#ff0000ff';
+      }
+
+      ctx.fillStyle = ballColor;
+      ctx.shadowColor = ballColor;
+      ctx.shadowBlur = 35 + speed * 2;
+
+      const r = (ball.radius || 10) * (ball.pulseScale || 1) * (rallyCount >= 25 ? 1.4 : 1);
       ctx.beginPath();
       ctx.arc(ball.x, ball.y, r, 0, Math.PI * 2);
       ctx.fill();
@@ -952,12 +1101,29 @@
     }
 
     function drawTrail() {
-      ball.trail.forEach((pos, i) => {
-        const alpha = i / ball.trail.length;
+      const speed = Math.sqrt(ball.speedX * ball.speedX + ball.speedY * ball.speedY);
+      const trailLength = Math.min(20, 8 + speed * 1.2);
+
+      ball.trail.slice(-trailLength).forEach((pos, i) => {
+        const alpha = i / trailLength;
+        let trailColor;
+        if (ball.isRGB) {
+          const phase = (ball.rgbPhase || 0) - i * 0.12;
+          const r = Math.floor(Math.sin(phase) * 127 + 128);
+          const g = Math.floor(Math.sin(phase + 2) * 127 + 128);
+          const b = Math.floor(Math.sin(phase + 4) * 127 + 128);
+          trailColor = `rgb(${r}, ${g}, ${b})`;
+        } else if (speed < 8) {
+          trailColor = '#ffffff';
+        } else if (speed < 10) {
+          trailColor = '#ff9900ff';
+        } else {
+          trailColor = '#ff0000ff';
+        }
         ctx.save();
         ctx.globalAlpha = alpha * 0.6;
-        ctx.fillStyle = "#39ff14";
-        ctx.shadowColor = "#39ff14";
+        ctx.fillStyle = trailColor;
+        ctx.shadowColor = trailColor;
         ctx.shadowBlur = 12 * alpha;
         ctx.beginPath();
         ctx.arc(pos.x, pos.y, ball.radius * 0.4, 0, Math.PI * 2);
@@ -965,6 +1131,7 @@
         ctx.restore();
       });
     }
+
 
     function createParticles(x, y) {
       for (let i = 0; i < 12; i++) {
@@ -975,6 +1142,20 @@
           vy: (Math.random() - 0.5) * 8 - 2,
           life: 20,
           size: Math.random() * 3 + 1,
+          color: '#39ff14'
+        });
+      }
+    }
+
+    function createScaledParticles(x, y, intensity) {
+      let count = Math.max(6, Math.floor(12 + intensity * 8));
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x, y,
+          vx: (Math.random() - 0.5) * (6 + intensity * 4),
+          vy: (Math.random() - 0.5) * (6 + intensity * 4) - 1,
+          life: 22 + Math.floor(intensity * 3),
+          size: (Math.random() * 3 + 1) * (1 + intensity * 0.3),
           color: '#39ff14'
         });
       }
