@@ -44,6 +44,12 @@
         Custom scrollbar if the content doesn't fits properly in ur screen (optional: zoom out if u want a better experience on laptop/desktop)
         </div>
         <div class="guide-section">
+        <strong>SPEED-BASED BALL</strong><br>
+        ⚪ White (slow) → 🟠 Orange (medium) → 🔴 RED (fast)<br>
+        🌈 RGB NEON MODE (if rally is 20+ with High Speed) → Colour changing RGB effect!<br>
+        Trail grows longer + glow bigger as speed increases
+        </div>
+        <div class="guide-section">
         <strong>RALLY HYPE & CHEERUP!</strong><br>
         Once rallies get long, the ball sometimes pulses while neon words like “INTENSE!” or “SWEET!” flash on screen, often spoken out loud in an arcade-style voice for extra hype.
         </div>
