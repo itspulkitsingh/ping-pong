@@ -135,7 +135,7 @@
         <h3> ❤️ CREDITS ❤️ </h3>
         <div style="color: #39ff14; font-size: 1.1rem;">
         Made with ♥ by <a href="https://github.com/itspulkitsingh" target="_blank" style="color:#39ff14;">Pulkit Singh</a><br>
-        Songs by <a href="https://ncs.io/" target="_blank" style="color: #39ff14;">NCS</a> (<a href="https://github.com/itspulkitsingh/ping-pong/blob/main/credits.txt" target="_blank" style="color: #39ff14;">CREDITS HERE</a>)
+        Songs by <a href="https://ncs.io/" target="_blank" style="color: #39ff14;">NCS</a> (<a href="./credits.txt" target="_blank" style="color: #39ff14;">CREDITS HERE</a>)
         </div>
         `
     };
@@ -194,4 +194,5 @@
     }
 
     window.initGuide = initGuide;
+
 })();
